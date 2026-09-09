@@ -7,7 +7,7 @@
 
 .card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -21,10 +21,61 @@
   font-size: 1.375rem;
 }
 
-.note {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.input {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.fieldError {
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+}
+
+.alert {
   margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.notice {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
   color: var(--color-text-muted);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
+}
+
+.traceId {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.75rem;
+  opacity: 0.8;
 }
 
 .submit {

@@ -10,7 +10,7 @@ const NAV_ITEMS = [
 ]
 
 export function AppLayout() {
-  const { session, signOut } = useSession()
+  const { user, signOut } = useSession()
 
   return (
     <div className={styles.shell}>
@@ -35,8 +35,8 @@ export function AppLayout() {
         </nav>
 
         <div className={styles.user}>
-          <span>{session?.displayName}</span>
-          <button type="button" className={styles.signOut} onClick={signOut}>
+          <span>{user?.fullName}</span>
+          <button type="button" className={styles.signOut} onClick={() => void signOut()}>
             Cerrar sesión
           </button>
         </div>

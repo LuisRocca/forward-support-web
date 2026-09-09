@@ -1,13 +1,18 @@
 import { Navigate, Outlet, useLocation } from 'react-router'
 import { useSession } from '../../features/auth/useSession.ts'
+import { FullPageLoader } from '../layout/FullPageLoader.tsx'
 import { paths } from './paths.ts'
 
 /** Con sesión abierta, el login no tiene sentido: al destino previo o al dashboard. */
 export function PublicOnlyRoute() {
-  const { isAuthenticated } = useSession()
+  const { status } = useSession()
   const location = useLocation()
 
-  if (isAuthenticated) {
+  if (status === 'loading') {
+    return <FullPageLoader label="Comprobando sesión…" />
+  }
+
+  if (status === 'authenticated') {
     return <Navigate to={redirectTarget(location.state)} replace />
   }
 

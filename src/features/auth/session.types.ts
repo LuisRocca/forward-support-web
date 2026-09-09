@@ -1,19 +1,13 @@
-/**
- * Forma PROVISIONAL de la sesión.
- *
- * El contrato de la API no está congelado: estos campos son lo mínimo que
- * necesita el shell (saber si hay sesión y a quién saludar en la barra), no un
- * DTO real. Cuando llegue el contrato, esto se sustituye por sus tipos.
- */
-export interface Session {
-  userId: string
-  displayName: string
-  accessToken: string
-}
+import type { AuthenticatedUser } from '../../shared/api/contract.ts'
+
+export type SessionStatus = 'loading' | 'anonymous' | 'authenticated'
 
 export interface SessionContextValue {
-  session: Session | null
+  status: SessionStatus
+  user: AuthenticatedUser | null
   isAuthenticated: boolean
-  signIn: () => Promise<void>
-  signOut: () => void
+  /** Motivo por el que se cerró la última sesión, para mostrarlo en el login. */
+  endedReason: string | null
+  signIn: (email: string, password: string) => Promise<void>
+  signOut: () => Promise<void>
 }
