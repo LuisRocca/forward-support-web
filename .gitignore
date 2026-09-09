@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Variables de entorno (el scaffold de Vite solo ignora *.local)
+.env
+.env.*
+!.env.example

@@ -1,35 +1,47 @@
-# React + TypeScript + Vite
+# Plataforma de Soporte — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Interfaz de operación para la gestión de tickets de soporte.
 
-Currently, two official plugins are available:
+Prueba técnica — Tech Lead Full Stack JavaScript.
+API en un repositorio aparte (`api_forward`), donde vive también la
+documentación de arquitectura y el modelo de datos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+| Capa | Elección |
+|---|---|
+| Build | Vite 8 |
+| UI | React 19 (con React Compiler) |
+| Lenguaje | TypeScript strict |
+| Lint | oxlint |
+| Paquetes | pnpm |
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Puesta en marcha
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+Requiere la API corriendo en `http://localhost:3000` (ver el README de `api_forward`).
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm install
+cp .env.example .env
+pnpm dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Disponible en `http://localhost:5173`.
+
+## Configuración
+
+Toda variable con prefijo `VITE_` **se empaqueta en el bundle y es pública**.
+Nunca poner ahí secretos: el token de acceso se obtiene en tiempo de ejecución
+contra la API, no se compila en el cliente.
+
+| Variable | Descripción |
+|---|---|
+| `VITE_API_URL` | URL base de la API |
+
+## Vistas previstas
+
+- [ ] Inicio de sesión — validación, manejo de errores y redirección según sesión
+- [ ] Dashboard operativo — métricas del estado de la operación
+- [ ] Listado de tickets — filtros y paginación
+- [ ] Detalle de ticket — información, comentarios e historial
+- [ ] Creación de ticket — formulario con validación
