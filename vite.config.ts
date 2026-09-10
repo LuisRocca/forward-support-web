@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import { defineConfig } from 'vite'
@@ -8,4 +9,8 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  test: {
+    // httpClient lee la URL de la API al cargar el módulo.
+    env: { VITE_API_URL: 'http://api.test' },
+  },
 })
