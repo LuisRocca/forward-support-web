@@ -46,7 +46,7 @@ export function TicketComments({
       ) : null}
 
       {data && data.data.length > 0 ? (
-        <ul className={styles.list}>
+        <ul className={`${styles.list} reveal`}>
           {data.data.map((comment) => (
             <li key={comment.id}>
               <CommentCard comment={comment} />

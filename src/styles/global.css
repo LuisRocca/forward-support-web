@@ -124,8 +124,27 @@ textarea {
 @keyframes route-enter {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(6px);
   }
+}
+
+/* Contenido que llega tras una carga: aparece en lugar de caer de golpe. */
+.reveal {
+  animation: route-enter 220ms var(--ease-out) both;
+}
+
+/* Un error o aviso nuevo entra suave: llama la atención sin sobresaltar. */
+[role='alert'] {
+  animation: route-enter var(--duration-base) var(--ease-out) both;
+}
+
+/* Halo de foco en los campos: además del contorno accesible, no en su lugar. */
+input:not([type='checkbox'], [type='radio']):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: 0;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {

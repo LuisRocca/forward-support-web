@@ -25,7 +25,7 @@ export function TicketHistory({ ticketId }: Readonly<{ ticketId: string }>) {
       ) : null}
 
       {data && data.length > 0 ? (
-        <ol className={styles.list}>
+        <ol className={`${styles.list} reveal`}>
           {data.map((entry, index) => (
             <li key={`${entry.occurredAt}-${index}`} className={styles.historyItem}>
               <span>{describe(entry)}</span>

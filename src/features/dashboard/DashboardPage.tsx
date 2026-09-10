@@ -25,7 +25,7 @@ export function DashboardPage() {
   if (error || !data) return <ErrorState error={error} onRetry={reload} />
 
   return (
-    <section className={styles.page}>
+    <section className={`${styles.page} reveal`}>
       <div className={styles.header}>
         <h1 className={styles.title}>Dashboard operativo</h1>
         {/* Los datos vienen de una vista materializada: se dice de cuándo son

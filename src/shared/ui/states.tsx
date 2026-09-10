@@ -4,14 +4,14 @@ import styles from './ui.module.css'
 
 export function LoadingState({ label }: Readonly<{ label: string }>) {
   return (
-    <p className={styles.state} role="status" aria-live="polite">
+    <p className={`${styles.state} ${styles.loading}`} role="status" aria-live="polite">
       {label}
     </p>
   )
 }
 
 export function EmptyState({ label }: Readonly<{ label: string }>) {
-  return <p className={styles.state}>{label}</p>
+  return <p className={`${styles.state} reveal`}>{label}</p>
 }
 
 /** Estado de error con reintento. El traceId solo aparece en fallos del servidor. */

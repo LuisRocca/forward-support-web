@@ -73,14 +73,15 @@ function TicketDetailView({ ticketId }: Readonly<{ ticketId: string }>) {
     (isAdmin || (hasAnyRole(user, ['agent']) && ticket.assignedTo?.id === user?.id))
 
   return (
-    <section className={styles.page}>
+    <section className={`${styles.page} reveal`}>
       <header className={styles.header}>
         <span className={styles.code}>{ticket.code}</span>
         <h1 className={styles.title}>{ticket.title}</h1>
         <div className={styles.badges}>
-          <Badge tone={statusTone(ticket.status)}>
-            {STATUS_LABEL[ticket.status]}
-          </Badge>
+          {/* La clave hace que el estado reaparezca al cambiar: se nota el cambio. */}
+          <span key={ticket.status} className="reveal">
+            <Badge tone={statusTone(ticket.status)}>{STATUS_LABEL[ticket.status]}</Badge>
+          </span>
           <Badge tone={priorityTone(ticket.priority)}>
             {PRIORITY_LABEL[ticket.priority]}
           </Badge>
