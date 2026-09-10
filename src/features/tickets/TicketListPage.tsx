@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
+import { Button } from '../../shared/ui/Button.tsx'
 import {
   PRIORITY_LABEL,
   PRIORITY_ORDER,
@@ -33,6 +34,18 @@ export function TicketListPage() {
     [query, setSearchParams],
   )
 
+  // La búsqueda se aplica al enviar: con 100.000 tickets, una petición por
+  // tecla es carga inútil contra la API.
+  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const raw = new FormData(event.currentTarget).get('search')
+    const value = typeof raw === 'string' ? raw.trim() : ''
+    update((next) => {
+      if (value) next.set('search', value)
+      else next.delete('search')
+    })
+  }
+
   const toggleValue = useCallback(
     (key: string, value: string) => {
       update((next) => {
@@ -64,21 +77,17 @@ export function TicketListPage() {
       </div>
 
       <div className={styles.filters}>
-        <div className={styles.searchRow}>
+        <form className={styles.searchRow} role="search" onSubmit={handleSearch}>
           <input
             className={styles.search}
             type="search"
+            name="search"
+            maxLength={120}
             placeholder="Buscar por título o código…"
             aria-label="Buscar tickets"
             defaultValue={searchParams.get('search') ?? ''}
-            onChange={(event) =>
-              update((next) => {
-                const value = event.target.value.trim()
-                if (value) next.set('search', value)
-                else next.delete('search')
-              })
-            }
           />
+          <Button type="submit">Buscar</Button>
           <select
             className={styles.select}
             aria-label="Ordenar por"
@@ -93,7 +102,7 @@ export function TicketListPage() {
               </option>
             ))}
           </select>
-        </div>
+        </form>
 
         <div className={styles.groups}>
           <fieldset className={styles.group}>
