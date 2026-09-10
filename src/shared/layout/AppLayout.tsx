@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { isEntryActive, visibleEntries } from '../../app/navigation.ts'
 import { useSession } from '../../features/auth/useSession.ts'
 import { ROLE_LABEL } from '../../features/users/labels.ts'
+import { ConfirmDialog } from '../ui/ConfirmDialog.tsx'
 import { NavIcon } from './NavIcon.tsx'
 import styles from './AppLayout.module.css'
 
@@ -12,6 +13,15 @@ export function AppLayout() {
   // Solo decide qué se pinta; la API responde 403 a quien no tenga permiso.
   const navItems = visibleEntries(user?.permissions ?? [])
   const activeIndex = navItems.findIndex((item) => isEntryActive(item.to, pathname))
+
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  async function handleSignOut() {
+    setIsSigningOut(true)
+    // Al cerrar la sesión, el guard lleva al login y este layout se desmonta.
+    await signOut()
+  }
 
   const navRef = useRef<HTMLElement>(null)
   const indicatorRef = useRef<HTMLSpanElement>(null)
@@ -56,7 +66,7 @@ export function AppLayout() {
               {user?.roles.map((role) => ROLE_LABEL[role]).join(', ')}
             </span>
           </div>
-          <button type="button" className={styles.signOut} onClick={() => void signOut()}>
+          <button type="button" className={styles.signOut} onClick={() => setConfirmingSignOut(true)}>
             Cerrar sesión
           </button>
         </div>
@@ -68,6 +78,17 @@ export function AppLayout() {
           <Outlet />
         </div>
       </main>
+
+      {confirmingSignOut ? (
+        <ConfirmDialog
+          title="¿Seguro que quieres cerrar sesión?"
+          message="Tendrás que volver a iniciar sesión para seguir trabajando."
+          confirmLabel="Cerrar sesión"
+          busy={isSigningOut}
+          onConfirm={() => void handleSignOut()}
+          onCancel={() => setConfirmingSignOut(false)}
+        />
+      ) : null}
     </div>
   )
 }

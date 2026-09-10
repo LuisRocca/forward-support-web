@@ -1,16 +1,14 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useId, useState } from 'react'
 import { blockUserRequestSchema } from '../../shared/api/contract.ts'
 import type { User } from '../../shared/api/contract.ts'
 import { errorMessage } from '../../shared/api/errorMessage.ts'
 import { zodFieldErrors } from '../../shared/forms/zodFieldErrors.ts'
 import { Button } from '../../shared/ui/Button.tsx'
+import { Dialog } from '../../shared/ui/Dialog.tsx'
 import { blockUser } from '../users/usersApi.ts'
 import styles from './admin.module.css'
 
-/**
- * `<dialog>` nativo en modo modal: el navegador ya da foco atrapado, cierre con
- * Escape y fondo inerte, sin reimplementarlo a mano.
- */
+/** Bloquear pide confirmación y un motivo, que queda en la auditoría. */
 export function BlockUserDialog({
   user,
   onBlocked,
@@ -20,18 +18,12 @@ export function BlockUserDialog({
   onBlocked: (updated: User) => void
   onCancel: () => void
 }>) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-  const titleId = useId()
   const reasonId = useId()
 
   const [reason, setReason] = useState('')
   const [fieldError, setFieldError] = useState<string | null>(null)
   const [error, setError] = useState<unknown>(null)
   const [isSaving, setIsSaving] = useState(false)
-
-  useEffect(() => {
-    dialogRef.current?.showModal()
-  }, [])
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -55,16 +47,8 @@ export function BlockUserDialog({
   }
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={styles.dialog}
-      aria-labelledby={titleId}
-      onClose={onCancel}
-    >
-      <form className={styles.dialogBody} onSubmit={(e) => void handleSubmit(e)}>
-        <h2 id={titleId} className={styles.dialogTitle}>
-          Bloquear a {user.fullName}
-        </h2>
+    <Dialog title={`¿Seguro que quieres bloquear a ${user.fullName}?`} onClose={onCancel}>
+      <form className={styles.dialogForm} onSubmit={(e) => void handleSubmit(e)}>
         <p className={styles.muted}>
           Se cerrarán al instante todas sus sesiones abiertas. Podrás
           desbloquearlo después.
@@ -96,12 +80,14 @@ export function BlockUserDialog({
         ) : null}
 
         <div className={styles.actions}>
-          <Button onClick={() => dialogRef.current?.close()}>Cancelar</Button>
+          <Button onClick={onCancel} disabled={isSaving}>
+            Cancelar
+          </Button>
           <Button type="submit" variant="primary" disabled={isSaving}>
             {isSaving ? 'Bloqueando…' : 'Bloquear'}
           </Button>
         </div>
       </form>
-    </dialog>
+    </Dialog>
   )
 }

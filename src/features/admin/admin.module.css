@@ -152,59 +152,6 @@
   padding: var(--space-2);
 }
 
-.dialog {
-  box-shadow: 0 24px 48px -24px var(--color-backdrop);
-  width: min(440px, calc(100vw - 2 * var(--space-4)));
-  padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  color: var(--color-text);
-}
-
-.dialog {
-  opacity: 0;
-  transform: scale(0.96);
-  transition:
-    opacity var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-out),
-    overlay var(--duration-base) allow-discrete,
-    display var(--duration-base) allow-discrete;
-}
-
-.dialog[open] {
-  opacity: 1;
-  transform: scale(1);
-}
-
-@starting-style {
-  .dialog[open] {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-}
-
-.dialog::backdrop {
-  background: var(--color-backdrop);
-  transition: background-color var(--duration-base) ease;
-}
-
-@starting-style {
-  .dialog[open]::backdrop {
-    background-color: transparent;
-  }
-}
-
-.dialogBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-6);
-}
-
-.dialogTitle {
-  font-size: 1.125rem;
-}
-
 .textarea {
   min-height: 96px;
   resize: vertical;
@@ -239,4 +186,10 @@
   .table tbody tr:hover {
     background: var(--color-surface-sunken);
   }
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
