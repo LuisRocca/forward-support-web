@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { TicketDetail, TicketStatus } from '../../shared/api/contract.ts'
-import { CONFLICT, isApiError } from '../../shared/api/apiError.ts'
+import { isConcurrencyConflict } from '../../shared/api/apiError.ts'
 import { errorMessage } from '../../shared/api/errorMessage.ts'
 import { useAsyncData } from '../../shared/hooks/useAsyncData.ts'
 import { Button } from '../../shared/ui/Button.tsx'
@@ -58,7 +58,7 @@ function reportError(
   onConflict: () => void,
 ) {
   setError(cause)
-  if (isApiError(cause) && cause.code === CONFLICT) onConflict()
+  if (isConcurrencyConflict(cause)) onConflict()
 }
 
 function StatusForm({

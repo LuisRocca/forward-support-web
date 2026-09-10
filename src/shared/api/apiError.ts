@@ -55,6 +55,14 @@ export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
 }
 
+/**
+ * Solo un 409 por concurrencia justifica recargar el recurso: una transición
+ * inválida o un ticket cerrado no cambian aunque se vuelva a pedir.
+ */
+export function isConcurrencyConflict(error: unknown): boolean {
+  return isApiError(error) && error.status === 409 && error.code === CONFLICT
+}
+
 /** Construye el error a partir del cuerpo RFC 9457 de una respuesta fallida. */
 export function toApiError(
   status: number,
