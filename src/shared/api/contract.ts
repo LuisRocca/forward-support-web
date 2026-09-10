@@ -41,7 +41,8 @@ export const problemSchema = z.object({
 })
 
 export const pageInfoSchema = z.object({
-  nextCursor: z.string().nullable().optional(),
+  /** Siempre presente: `null` significa "no hay más", no "no me lo mandaron". */
+  nextCursor: z.string().nullable(),
   hasMore: z.boolean(),
 })
 
@@ -161,9 +162,52 @@ export function pageSchema<T extends z.ZodType>(item: T) {
   return z.object({ data: z.array(item), pageInfo: pageInfoSchema })
 }
 
+/**
+ * Esquemas de las peticiones. Las reglas de validación del formulario salen de
+ * aquí y no se reescriben a mano en la vista: el contrato es el que manda.
+ */
+export const createTicketRequestSchema = z.object({
+  clientId: uuid.min(1, 'Selecciona un cliente'),
+  categoryId: uuid.nullable().optional(),
+  title: z
+    .string()
+    .min(5, 'El título debe tener al menos 5 caracteres')
+    .max(200, 'El título no puede pasar de 200 caracteres'),
+  description: z
+    .string()
+    .min(10, 'La descripción debe tener al menos 10 caracteres')
+    .max(10000, 'La descripción no puede pasar de 10000 caracteres'),
+  priority: ticketPrioritySchema,
+  assignedToUserId: uuid.nullable().optional(),
+})
+
+export const assignTicketRequestSchema = z.object({
+  assignedToUserId: uuid.min(1, 'Selecciona a quién se asigna'),
+  reason: z.string().max(255, 'El motivo no puede pasar de 255 caracteres').optional(),
+})
+
+export const changeStatusRequestSchema = z.object({
+  status: ticketStatusSchema,
+  note: z.string().max(255, 'La nota no puede pasar de 255 caracteres').optional(),
+})
+
+export const createCommentRequestSchema = z.object({
+  body: z
+    .string()
+    .min(1, 'El comentario no puede estar vacío')
+    .max(5000, 'El comentario no puede pasar de 5000 caracteres'),
+  isInternal: z.boolean(),
+})
+
+export type CreateTicketRequest = z.infer<typeof createTicketRequestSchema>
+export type AssignTicketRequest = z.infer<typeof assignTicketRequestSchema>
+export type ChangeStatusRequest = z.infer<typeof changeStatusRequestSchema>
+export type CreateCommentRequest = z.infer<typeof createCommentRequestSchema>
+
 export type TicketStatus = z.infer<typeof ticketStatusSchema>
 export type TicketPriority = z.infer<typeof ticketPrioritySchema>
 export type RoleCode = z.infer<typeof roleCodeSchema>
+export type UserStatus = z.infer<typeof userStatusSchema>
 export type Problem = z.infer<typeof problemSchema>
 export type PageInfo = z.infer<typeof pageInfoSchema>
 export type UserRef = z.infer<typeof userRefSchema>
