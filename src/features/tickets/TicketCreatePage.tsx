@@ -16,6 +16,8 @@ import { PRIORITY_LABEL, PRIORITY_ORDER } from './labels.ts'
 import { createTicket } from './ticketsApi.ts'
 import styles from './TicketCreatePage.module.css'
 
+const CLIENT_PAGE = 50
+
 export function TicketCreatePage() {
   const navigate = useNavigate()
   const ids = {
@@ -26,11 +28,24 @@ export function TicketCreatePage() {
     priority: useId(),
   }
 
+  // Los clientes se buscan en el servidor: cargarlos todos en el selector no
+  // escala y un tope fijo deja fuera, sin avisar, a los que no caben.
+  const [clientDraft, setClientDraft] = useState('')
+  const [clientSearch, setClientSearch] = useState('')
   const loadClients = useCallback(
-    (signal: AbortSignal) => listClients({ isActive: true, limit: 100 }, signal),
-    [],
+    (signal: AbortSignal) =>
+      listClients(
+        { isActive: true, limit: CLIENT_PAGE, search: clientSearch || undefined },
+        signal,
+      ),
+    [clientSearch],
   )
   const { data: clients, error: clientsError } = useAsyncData(loadClients)
+
+  function applyClientSearch() {
+    setClientSearch(clientDraft.trim())
+    setClientId('')
+  }
 
   // El catálogo se pide una vez por sesión, no en cada carga del formulario.
   const loadCategories = useCallback(() => listCategories(), [])
@@ -98,6 +113,24 @@ export function TicketCreatePage() {
             <label className={styles.label} htmlFor={ids.client}>
               Cliente
             </label>
+            <div className={styles.searchRow}>
+              <input
+                className={styles.input}
+                type="search"
+                maxLength={120}
+                placeholder="Buscar cliente por nombre…"
+                aria-label="Buscar cliente"
+                value={clientDraft}
+                onChange={(event) => setClientDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  // Enter aquí busca clientes; no debe enviar el ticket.
+                  if (event.key !== 'Enter') return
+                  event.preventDefault()
+                  applyClientSearch()
+                }}
+              />
+              <Button onClick={applyClientSearch}>Buscar</Button>
+            </div>
             <select
               id={ids.client}
               className={styles.select}
@@ -114,6 +147,15 @@ export function TicketCreatePage() {
             </select>
             {fieldErrors['clientId'] ? (
               <span className={styles.fieldError}>{fieldErrors['clientId']}</span>
+            ) : null}
+            {clients?.pageInfo.hasMore ? (
+              <span className={styles.hint}>
+                Se muestran los {CLIENT_PAGE} primeros: busca por nombre para
+                encontrar el resto.
+              </span>
+            ) : null}
+            {clients && clients.data.length === 0 ? (
+              <span className={styles.hint}>Ningún cliente activo coincide.</span>
             ) : null}
             {clientsError ? (
               <span className={styles.fieldError}>
