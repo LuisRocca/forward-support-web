@@ -3,7 +3,7 @@ import { useSession } from '../../features/auth/useSession.ts'
 import { FullPageLoader } from '../layout/FullPageLoader.tsx'
 import { paths } from './paths.ts'
 
-/** Con sesión abierta, el login no tiene sentido: al destino previo o al dashboard. */
+/** Con sesión abierta, el login no tiene sentido: al destino previo o al inicio. */
 export function PublicOnlyRoute() {
   const { status } = useSession()
   const location = useLocation()
@@ -25,5 +25,6 @@ function redirectTarget(state: unknown): string {
     const { from } = state
     if (typeof from === 'string') return from
   }
-  return paths.dashboard
+  // El inicio redirige a la primera vista que el usuario tiene permitida.
+  return paths.home
 }

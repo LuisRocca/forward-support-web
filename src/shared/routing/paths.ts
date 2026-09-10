@@ -1,5 +1,6 @@
 /** Rutas de la aplicación en un único sitio: nadie escribe strings sueltos. */
 export const paths = {
+  home: '/',
   login: '/login',
   dashboard: '/dashboard',
   tickets: '/tickets',

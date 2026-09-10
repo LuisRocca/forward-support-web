@@ -63,8 +63,24 @@ export const userSchema = z.object({
   createdAt: dateTime,
 })
 
+/** Catálogo de permisos del contrato (c0c1268), con su tabla rol → permiso. */
+export const permissionSchema = z.enum([
+  'ticket:read:all',
+  'ticket:read:own',
+  'ticket:create',
+  'ticket:update',
+  'ticket:assign',
+  'ticket:status',
+  'comment:create',
+  'comment:read:internal',
+  'user:read',
+  'user:block',
+  'client:read',
+  'metrics:read',
+])
+
 export const authenticatedUserSchema = userSchema.extend({
-  permissions: z.array(z.string()),
+  permissions: z.array(permissionSchema),
 })
 
 export const sessionResponseSchema = z.object({
@@ -245,6 +261,7 @@ export type CreateCommentRequest = z.infer<typeof createCommentRequestSchema>
 export type TicketStatus = z.infer<typeof ticketStatusSchema>
 export type TicketPriority = z.infer<typeof ticketPrioritySchema>
 export type RoleCode = z.infer<typeof roleCodeSchema>
+export type Permission = z.infer<typeof permissionSchema>
 export type UserStatus = z.infer<typeof userStatusSchema>
 export type Problem = z.infer<typeof problemSchema>
 export type PageInfo = z.infer<typeof pageInfoSchema>
