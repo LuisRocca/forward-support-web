@@ -5,6 +5,7 @@ import { formatDateTime } from '../../shared/format/datetime.ts'
 import { useKeysetList } from '../../shared/hooks/useKeysetList.ts'
 import { Badge } from '../../shared/ui/Badge.tsx'
 import { Button } from '../../shared/ui/Button.tsx'
+import { Refreshable } from '../../shared/ui/Refreshable.tsx'
 import { EmptyState, ErrorState, LoadingState } from '../../shared/ui/states.tsx'
 import { ROLE_LABEL, USER_STATUS_LABEL, userStatusTone } from '../users/labels.ts'
 import { listUsers, unblockUser } from '../users/usersApi.ts'
@@ -25,7 +26,7 @@ export function UsersResults({ status, roleCode, currentUserId, canManage }: Rea
       listUsers({ status, roleCode, cursor }, signal),
     [status, roleCode],
   )
-  const { items, pageInfo, error, isLoading, isLoadingMore, loadMore, replaceItem } =
+  const { items, pageInfo, error, isLoading, isLoadingMore, isRefreshing, loadMore, replaceItem } =
     useKeysetList(fetchPage)
 
   const [blocking, setBlocking] = useState<User | null>(null)
@@ -53,84 +54,87 @@ export function UsersResults({ status, roleCode, currentUserId, canManage }: Rea
 
   if (isLoading) return <LoadingState label="Cargando usuarios…" />
   if (error) return <ErrorState error={error} />
-  if (items.length === 0) {
-    return <EmptyState label="Ningún usuario coincide con estos filtros." />
-  }
 
   return (
-    <>
-      <div className={styles.tableWrap}>
-        <table className={styles.table}>
-          <caption>
-            {items.length} usuarios cargados
-            {pageInfo?.hasMore ? ', hay más disponibles' : ''}
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Email</th>
-              <th scope="col">Roles</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Último acceso</th>
-              {canManage ? <th scope="col">Acciones</th> : null}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((user) => (
-              <tr key={user.id}>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>
-                  <div className={styles.badges}>
-                    {user.roles.map((role) => (
-                      <Badge key={role}>{ROLE_LABEL[role]}</Badge>
-                    ))}
-                  </div>
-                </td>
-                <td>
-                  <Badge tone={userStatusTone(user.status)}>
-                    {USER_STATUS_LABEL[user.status]}
-                  </Badge>
-                  {user.status === 'blocked' && user.blockedReason ? (
-                    <span className={`${styles.muted} ${styles.rowError}`}>
-                      Motivo: {user.blockedReason}
-                    </span>
-                  ) : null}
-                </td>
-                <td className={styles.muted}>
-                  {user.lastLoginAt ? formatDateTime(user.lastLoginAt) : 'Nunca'}
-                </td>
-                {canManage ? (
-                  <td>
-                    <UserAction
-                      user={user}
-                      isSelf={user.id === currentUserId}
-                      isPending={pendingId === user.id}
-                      onBlock={() => setBlocking(user)}
-                      onUnblock={() => void handleUnblock(user)}
-                    />
-                    {rowError?.id === user.id ? (
-                      <span className={styles.rowError} role="alert">
-                        {errorMessage(rowError.error)}
-                      </span>
-                    ) : null}
-                  </td>
-                ) : null}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className={styles.footer}>
-        {pageInfo?.hasMore ? (
-          <Button disabled={isLoadingMore} onClick={() => void loadMore()}>
-            {isLoadingMore ? 'Cargando…' : 'Cargar más'}
-          </Button>
+    <div className="reveal">
+      <Refreshable refreshing={isRefreshing}>
+        {items.length === 0 ? (
+          <EmptyState label="Ningún usuario coincide con estos filtros." />
         ) : (
-          <span className={styles.muted}>No hay más resultados.</span>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <caption>
+                {items.length} usuarios cargados
+                {pageInfo?.hasMore ? ', hay más disponibles' : ''}
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Roles</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Último acceso</th>
+                  {canManage ? <th scope="col">Acciones</th> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.fullName}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <div className={styles.badges}>
+                        {user.roles.map((role) => (
+                          <Badge key={role}>{ROLE_LABEL[role]}</Badge>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      <Badge tone={userStatusTone(user.status)}>
+                        {USER_STATUS_LABEL[user.status]}
+                      </Badge>
+                      {user.status === 'blocked' && user.blockedReason ? (
+                        <span className={`${styles.muted} ${styles.rowError}`}>
+                          Motivo: {user.blockedReason}
+                        </span>
+                      ) : null}
+                    </td>
+                    <td className={styles.muted}>
+                      {user.lastLoginAt ? formatDateTime(user.lastLoginAt) : 'Nunca'}
+                    </td>
+                    {canManage ? (
+                      <td>
+                        <UserAction
+                          user={user}
+                          isSelf={user.id === currentUserId}
+                          isPending={pendingId === user.id}
+                          onBlock={() => setBlocking(user)}
+                          onUnblock={() => void handleUnblock(user)}
+                        />
+                        {rowError?.id === user.id ? (
+                          <span className={styles.rowError} role="alert">
+                            {errorMessage(rowError.error)}
+                          </span>
+                        ) : null}
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-      </div>
+
+        <div className={styles.footer}>
+          {pageInfo?.hasMore ? (
+            <Button disabled={isLoadingMore || isRefreshing} onClick={() => void loadMore()}>
+              {isLoadingMore ? 'Cargando…' : 'Cargar más'}
+            </Button>
+          ) : (
+            <span className={styles.muted}>No hay más resultados.</span>
+          )}
+        </div>
+      </Refreshable>
 
       {blocking ? (
         <BlockUserDialog
@@ -142,7 +146,7 @@ export function UsersResults({ status, roleCode, currentUserId, canManage }: Rea
           onCancel={() => setBlocking(null)}
         />
       ) : null}
-    </>
+    </div>
   )
 }
 

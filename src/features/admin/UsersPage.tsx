@@ -62,7 +62,6 @@ export function UsersPage() {
       </div>
 
       <UsersResults
-        key={`${status ?? ''}|${roleCode ?? ''}`}
         status={status}
         roleCode={roleCode}
         currentUserId={user?.id}

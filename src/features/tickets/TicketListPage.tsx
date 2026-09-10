@@ -163,7 +163,7 @@ export function TicketListPage() {
         </div>
       </div>
 
-      <TicketResults key={query} params={params} />
+      <TicketResults params={params} />
     </section>
   )
 }

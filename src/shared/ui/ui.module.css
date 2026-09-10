@@ -85,3 +85,63 @@
     background: var(--color-accent-hover);
   }
 }
+
+/* Aviso de carga: solo aparece si la carga tarda, para no parpadear. */
+.loading {
+  animation: loading-in var(--duration-base) ease 150ms both;
+}
+
+@keyframes loading-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.refreshable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.refreshContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: opacity var(--duration-fast) ease;
+}
+
+.refreshable[data-refreshing='true'] .refreshContent {
+  opacity: 0.55;
+}
+
+.refreshBar {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+}
+
+.refreshBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 35%;
+  background: var(--color-signal);
+  transform: translateX(-100%);
+}
+
+.refreshable[data-refreshing='true'] .refreshBar {
+  opacity: 1;
+}
+
+.refreshable[data-refreshing='true'] .refreshBar::after {
+  animation: refresh-slide 900ms linear infinite;
+}
+
+@keyframes refresh-slide {
+  to {
+    transform: translateX(290%);
+  }
+}

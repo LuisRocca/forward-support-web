@@ -50,7 +50,6 @@ export function ClientsPage() {
       </form>
 
       <ClientsResults
-        key={`${search}|${onlyActive ? '1' : '0'}`}
         search={search}
         onlyActive={onlyActive}
       />

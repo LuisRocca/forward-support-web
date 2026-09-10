@@ -12,15 +12,17 @@ interface State<T> {
   error: unknown
   isLoading: boolean
   isLoadingMore: boolean
+  /** Consulta a la que pertenecen los datos mostrados. */
+  source: unknown
 }
 
 /**
  * Listado paginado por keyset: la siguiente página se pide con el `nextCursor`
  * de la anterior y se acumula. No hay número de página ni total.
  *
- * `fetchPage` debe venir en `useCallback`. Para reiniciar con otros filtros,
- * quien lo usa remonta el componente con una `key`: así el hook no tiene que
- * resetearse a sí mismo dentro de un efecto.
+ * `fetchPage` debe venir en `useCallback`: al cambiar (otros filtros) se pide
+ * la primera página de nuevo. Mientras llega, se sigue mostrando la lista
+ * anterior (`isRefreshing`): vaciarla haría saltar la página entera.
  */
 export function useKeysetList<T>(
   fetchPage: (cursor: string | null, signal?: AbortSignal) => Promise<Page<T>>,
@@ -31,6 +33,7 @@ export function useKeysetList<T>(
     error: null,
     isLoading: true,
     isLoadingMore: false,
+    source: null,
   })
 
   useEffect(() => {
@@ -46,6 +49,7 @@ export function useKeysetList<T>(
           error: null,
           isLoading: false,
           isLoadingMore: false,
+          source: fetchPage,
         })
       } catch (error) {
         if (controller.signal.aborted) return
@@ -55,6 +59,7 @@ export function useKeysetList<T>(
           error,
           isLoading: false,
           isLoadingMore: false,
+          source: fetchPage,
         })
       }
     }
@@ -63,24 +68,33 @@ export function useKeysetList<T>(
     return () => controller.abort()
   }, [fetchPage])
 
+  const isRefreshing = !state.isLoading && state.source !== fetchPage
+
   const loadMore = useCallback(async () => {
     const cursor = state.pageInfo?.nextCursor
-    if (!cursor || state.isLoadingMore) return
+    if (!cursor || state.isLoadingMore || isRefreshing) return
 
     setState((prev) => ({ ...prev, isLoadingMore: true }))
 
     try {
       const page = await fetchPage(cursor)
-      setState((prev) => ({
-        ...prev,
-        items: [...prev.items, ...page.data],
-        pageInfo: page.pageInfo,
-        isLoadingMore: false,
-      }))
+      // Si entretanto cambiaron los filtros, esta página ya no pertenece a la lista.
+      setState((prev) =>
+        prev.source === fetchPage
+          ? {
+              ...prev,
+              items: [...prev.items, ...page.data],
+              pageInfo: page.pageInfo,
+              isLoadingMore: false,
+            }
+          : prev,
+      )
     } catch (error) {
-      setState((prev) => ({ ...prev, error, isLoadingMore: false }))
+      setState((prev) =>
+        prev.source === fetchPage ? { ...prev, error, isLoadingMore: false } : prev,
+      )
     }
-  }, [fetchPage, state.pageInfo, state.isLoadingMore])
+  }, [fetchPage, state.pageInfo, state.isLoadingMore, isRefreshing])
 
   /** Sustituye un elemento ya cargado, p. ej. tras bloquear a un usuario. */
   const replaceItem = useCallback((match: (item: T) => boolean, next: T) => {
@@ -90,5 +104,14 @@ export function useKeysetList<T>(
     }))
   }, [])
 
-  return { ...state, loadMore, replaceItem }
+  return {
+    items: state.items,
+    pageInfo: state.pageInfo,
+    error: state.error,
+    isLoading: state.isLoading,
+    isLoadingMore: state.isLoadingMore,
+    isRefreshing,
+    loadMore,
+    replaceItem,
+  }
 }
