@@ -10,6 +10,7 @@ import { EmptyState, ErrorState, LoadingState } from '../../shared/ui/states.tsx
 import {
   PRIORITY_LABEL,
   STATUS_LABEL,
+  isOpen,
   priorityTone,
   statusTone,
 } from './labels.ts'
@@ -79,7 +80,7 @@ export function TicketResults({ params }: { params: TicketListParams }) {
 
 function TicketRow({ ticket }: { ticket: TicketSummary }) {
   const isStale =
-    ticket.status !== 'closed' && hoursSince(ticket.lastActivityAt) > STALE_HOURS
+    isOpen(ticket.status) && hoursSince(ticket.lastActivityAt) > STALE_HOURS
 
   return (
     <tr>

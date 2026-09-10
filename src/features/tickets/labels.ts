@@ -25,6 +25,17 @@ export const STATUS_ORDER: TicketStatus[] = [
   'closed',
 ]
 
+/**
+ * Definición única de ticket abierto (contrato, 2f957d5): `resolved` espera
+ * cierre y no requiere acción, así que no cuenta. Estancado y sin asignar son
+ * siempre subconjuntos de esto.
+ */
+export const OPEN_STATUSES: TicketStatus[] = ['open', 'in_progress', 'pending_customer']
+
+export function isOpen(status: TicketStatus): boolean {
+  return OPEN_STATUSES.includes(status)
+}
+
 export const PRIORITY_ORDER: TicketPriority[] = [
   'low',
   'medium',

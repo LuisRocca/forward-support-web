@@ -41,7 +41,7 @@ export interface TicketListParams {
   /** `unassigned` devuelve la bandeja sin asignar. */
   assignedToUserId?: string
   search?: string
-  /** Solo tickets no cerrados sin actividad desde hace más de N horas. */
+  /** Solo tickets abiertos sin actividad desde hace más de N horas. */
   staleHours?: number
   sort?: TicketSort
 }
