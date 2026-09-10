@@ -22,14 +22,23 @@ export class ApiError extends Error {
   readonly code: string
   readonly traceId: string | undefined
   readonly problem: Problem | null
+  /** Segundos hasta poder reintentar. Obligatorio en los 429 del contrato. */
+  readonly retryAfterSeconds: number | null
 
-  constructor(status: number, code: string, message: string, problem?: Problem) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    problem?: Problem,
+    retryAfterSeconds?: number,
+  ) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.code = code
     this.traceId = problem?.traceId
     this.problem = problem ?? null
+    this.retryAfterSeconds = retryAfterSeconds ?? null
   }
 
   /** Errores campo a campo de un 422, para pintarlos junto a cada input. */
@@ -44,12 +53,39 @@ export function isApiError(error: unknown): error is ApiError {
 }
 
 /** Construye el error a partir del cuerpo RFC 9457 de una respuesta fallida. */
-export function toApiError(status: number, body: unknown): ApiError {
+export function toApiError(
+  status: number,
+  body: unknown,
+  retryAfterSeconds?: number,
+): ApiError {
   const parsed = problemSchema.safeParse(body)
   if (!parsed.success) {
-    return new ApiError(status, `HTTP_${status}`, `La API respondió ${status}`)
+    return new ApiError(
+      status,
+      `HTTP_${status}`,
+      `La API respondió ${status}`,
+      undefined,
+      retryAfterSeconds,
+    )
   }
-  return new ApiError(status, parsed.data.code, parsed.data.title, parsed.data)
+  return new ApiError(
+    status,
+    parsed.data.code,
+    parsed.data.title,
+    parsed.data,
+    retryAfterSeconds,
+  )
+}
+
+/**
+ * Lee la cabecera `Retry-After`. El contrato la manda en segundos; se ignora
+ * cualquier otra cosa en vez de enseñar una cuenta atrás inventada.
+ */
+export function parseRetryAfter(header: string | null): number | undefined {
+  if (!header) return undefined
+  const seconds = Number(header)
+  if (!Number.isFinite(seconds) || seconds <= 0) return undefined
+  return Math.ceil(seconds)
 }
 
 export function networkError(cause: unknown): ApiError {

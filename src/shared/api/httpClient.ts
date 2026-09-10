@@ -5,6 +5,7 @@ import {
   contractMismatch,
   isApiError,
   networkError,
+  parseRetryAfter,
   toApiError,
 } from './apiError.ts'
 
@@ -155,7 +156,19 @@ async function parseResponse<T>(
   const body = await readBody(response)
 
   if (!response.ok) {
-    throw toApiError(response.status, body)
+    const retryAfter = parseRetryAfter(response.headers.get('Retry-After'))
+
+    // `Retry-After` no es una cabecera expuesta por defecto en CORS: si el
+    // servidor no manda `Access-Control-Expose-Headers`, el navegador la oculta
+    // aunque venga en la respuesta, y la espera desaparecería sin ningún error.
+    if (response.status === 429 && retryAfter === undefined) {
+      console.warn(
+        `[api] 429 sin Retry-After legible en ${path}. ` +
+          'Comprueba que la API manda «Access-Control-Expose-Headers: Retry-After».',
+      )
+    }
+
+    throw toApiError(response.status, body, retryAfter)
   }
 
   const parsed = schema.safeParse(body)

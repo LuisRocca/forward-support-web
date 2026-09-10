@@ -36,6 +36,11 @@ export function reportableTraceId(error: unknown): string | null {
   return error.traceId ?? null
 }
 
+/** Segundos de espera de un 429, o null si el error no impone espera. */
+export function retryAfterOf(error: unknown): number | null {
+  return isApiError(error) ? error.retryAfterSeconds : null
+}
+
 /** Errores campo a campo de un 422, vacío si el error no es de validación. */
 export function fieldErrorsOf(error: unknown): Record<string, string> {
   return isApiError(error) ? error.fieldErrors : {}

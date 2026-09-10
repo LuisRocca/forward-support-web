@@ -1,8 +1,9 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import {
   errorMessage,
   fieldErrorsOf,
   reportableTraceId,
+  retryAfterOf,
 } from '../../shared/api/errorMessage.ts'
 import { useSession } from './useSession.ts'
 import styles from './LoginPage.module.css'
@@ -16,18 +17,31 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<unknown>(null)
+  const [retryIn, setRetryIn] = useState(0)
 
   const fieldErrors = fieldErrorsOf(error)
   const traceId = reportableTraceId(error)
+  const isBlocked = isSubmitting || retryIn > 0
+
+  // Cuenta atrás del 429. Los segundos los manda el servidor en `Retry-After`:
+  // sin ese dato no habría cuenta atrás, solo un "espera un momento" inventado.
+  useEffect(() => {
+    if (retryIn <= 0) return undefined
+    const timer = setTimeout(() => setRetryIn((seconds) => seconds - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [retryIn])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (isBlocked) return
+
     setError(null)
     setIsSubmitting(true)
     try {
       await signIn(email, password)
     } catch (cause) {
       setError(cause)
+      setRetryIn(retryAfterOf(cause) ?? 0)
     } finally {
       setIsSubmitting(false)
     }
@@ -45,6 +59,11 @@ export function LoginPage() {
         {error ? (
           <p className={styles.alert} role="alert">
             {errorMessage(error)}
+            {retryIn > 0 ? (
+              <span className={styles.traceId}>
+                Podrás reintentar en {retryIn} s.
+              </span>
+            ) : null}
             {traceId ? (
               <span className={styles.traceId}>Referencia: {traceId}</span>
             ) : null}
@@ -65,6 +84,7 @@ export function LoginPage() {
             maxLength={255}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={retryIn > 0}
             aria-invalid={fieldErrors['email'] ? true : undefined}
             aria-describedby={fieldErrors['email'] ? `${emailId}-error` : undefined}
           />
@@ -90,6 +110,7 @@ export function LoginPage() {
             maxLength={128}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={retryIn > 0}
             aria-invalid={fieldErrors['password'] ? true : undefined}
             aria-describedby={
               fieldErrors['password'] ? `${passwordId}-error` : undefined
@@ -102,10 +123,15 @@ export function LoginPage() {
           ) : null}
         </div>
 
-        <button type="submit" className={styles.submit} disabled={isSubmitting}>
-          {isSubmitting ? 'Entrando…' : 'Entrar'}
+        <button type="submit" className={styles.submit} disabled={isBlocked}>
+          {submitLabel(isSubmitting, retryIn)}
         </button>
       </form>
     </div>
   )
+}
+
+function submitLabel(isSubmitting: boolean, retryIn: number): string {
+  if (retryIn > 0) return `Espera ${retryIn} s`
+  return isSubmitting ? 'Entrando…' : 'Entrar'
 }
