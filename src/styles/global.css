@@ -60,6 +60,8 @@
   --duration-base: 200ms;
 
   color-scheme: light;
+  /* Casillas y radios nativos en el naranja de acción. */
+  accent-color: var(--color-accent);
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.5;

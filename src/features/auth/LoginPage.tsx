@@ -50,6 +50,7 @@ export function LoginPage() {
   return (
     <div className={styles.page}>
       <form className={styles.card} onSubmit={(e) => void handleSubmit(e)}>
+        <span className={styles.mark} aria-hidden="true" />
         <h1 className={styles.title}>Plataforma de Soporte</h1>
 
         {endedReason && !error ? (

@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { Link } from 'react-router'
 import type { DashboardMetrics } from '../../shared/api/contract.ts'
 import { formatDateTime } from '../../shared/format/datetime.ts'
+import { formatDecimal, formatInteger } from '../../shared/format/number.ts'
 import { useAsyncData } from '../../shared/hooks/useAsyncData.ts'
 import { paths } from '../../shared/routing/paths.ts'
 import { ErrorState, LoadingState } from '../../shared/ui/states.tsx'
@@ -85,7 +86,7 @@ function Tile({
 }>) {
   const content = (
     <>
-      <span className={styles.tileValue}>{value}</span>
+      <span className={styles.tileValue}>{formatInteger(value)}</span>
       <span className={styles.tileLabel}>{label}</span>
     </>
   )
@@ -114,7 +115,7 @@ function Breakdown({ title, rows }: Readonly<{ title: string; rows: BreakdownRow
         {rows.map((row) => (
           <li key={row.key} className={styles.row}>
             <span>{row.label}</span>
-            <span className={styles.count}>{row.value}</span>
+            <span className={styles.count}>{formatInteger(row.value)}</span>
             <span className={styles.bar}>
               <span
                 className={styles.barFill}
@@ -143,7 +144,7 @@ function AverageResolution({
           <li key={entry.priority} className={styles.row}>
             <span>{PRIORITY_LABEL[entry.priority]}</span>
             <span className={styles.count}>
-              {entry.hours === null ? '—' : `${entry.hours.toFixed(1)} h`}
+              {entry.hours === null ? '—' : `${formatDecimal(entry.hours)} h`}
             </span>
           </li>
         ))}

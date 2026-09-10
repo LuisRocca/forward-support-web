@@ -23,7 +23,7 @@
   padding: var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 
 .searchRow {
@@ -37,7 +37,7 @@
   min-width: 220px;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-control-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font: inherit;
   color: var(--color-text);
 }
@@ -45,7 +45,7 @@
 .select {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-control-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
@@ -90,13 +90,14 @@
   overflow-x: auto;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .table th,
@@ -108,6 +109,7 @@
 }
 
 .table th {
+  background: var(--color-surface-sunken);
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   font-weight: 600;
@@ -117,17 +119,55 @@
   border-bottom: none;
 }
 
-.table tbody tr:hover {
-  background: var(--color-bg);
+@media (hover: hover) {
+  .table tbody tr:hover {
+    background: var(--color-surface-sunken);
+  }
 }
 
-.ticketTitle {
+/* `.table td` fija nowrap: estas celdas necesitan el mismo peso para poder partirse. */
+.table td.ticketTitle {
   white-space: normal;
-  min-width: 240px;
+  min-width: 160px;
+}
+
+/* En una columna entera, enlaces naranjas subrayados pesan demasiado:
+   el título va en tinta y se marca al pasar por encima. */
+.ticketTitle a {
+  color: var(--color-text);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+}
+
+@media (hover: hover) {
+  .ticketTitle a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+}
+
+.table td.wrap {
+  white-space: normal;
+  min-width: 100px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  max-width: 190px;
+}
+
+.table caption {
+  caption-side: top;
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  text-align: left;
 }
 
 .code {
-  font-family: ui-monospace, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
   font-size: 0.8125rem;
 }
 
@@ -141,4 +181,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2);
+}
+
+.table tbody tr {
+  transition: background-color var(--duration-fast) ease;
 }

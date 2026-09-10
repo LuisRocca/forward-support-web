@@ -53,7 +53,7 @@ const STATUS_TONE: Record<TicketStatus, BadgeTone> = {
 
 const PRIORITY_TONE: Record<TicketPriority, BadgeTone> = {
   low: 'neutral',
-  medium: 'info',
+  medium: 'neutral',
   high: 'warning',
   critical: 'danger',
 }

@@ -52,7 +52,6 @@ export function TicketResults({ params }: Readonly<{ params: TicketListParams }>
               <th scope="col">Título</th>
               <th scope="col">Cliente</th>
               <th scope="col">Estado</th>
-              <th scope="col">Prioridad</th>
               <th scope="col">Asignado a</th>
               <th scope="col">Última actividad</th>
             </tr>
@@ -88,24 +87,19 @@ function TicketRow({ ticket }: Readonly<{ ticket: TicketSummary }>) {
       <td className={styles.ticketTitle}>
         <Link to={ticketDetailPath(ticket.id)}>{ticket.title}</Link>
       </td>
-      <td>{ticket.client.name}</td>
+      <td className={styles.wrap}>{ticket.client.name}</td>
       <td>
-        <Badge tone={statusTone(ticket.status)}>
-          {STATUS_LABEL[ticket.status]}
-        </Badge>
+        {/* Estado, prioridad y estancado juntos: una columna menos que desborde. */}
+        <div className={styles.badges}>
+          <Badge tone={statusTone(ticket.status)}>{STATUS_LABEL[ticket.status]}</Badge>
+          <Badge tone={priorityTone(ticket.priority)}>{PRIORITY_LABEL[ticket.priority]}</Badge>
+          {isStale ? <Badge tone="danger">Estancado</Badge> : null}
+        </div>
       </td>
-      <td>
-        <Badge tone={priorityTone(ticket.priority)}>
-          {PRIORITY_LABEL[ticket.priority]}
-        </Badge>
-      </td>
-      <td className={ticket.assignedTo ? '' : styles.muted}>
+      <td className={`${styles.wrap} ${ticket.assignedTo ? '' : styles.muted}`}>
         {ticket.assignedTo?.fullName ?? 'Sin asignar'}
       </td>
-      <td>
-        {formatDateTime(ticket.lastActivityAt)}{' '}
-        {isStale ? <Badge tone="danger">Estancado</Badge> : null}
-      </td>
+      <td className={styles.wrap}>{formatDateTime(ticket.lastActivityAt)}</td>
     </tr>
   )
 }
