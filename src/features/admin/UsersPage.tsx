@@ -25,7 +25,7 @@ export function UsersPage() {
 
       <div className={styles.filters}>
         <label className={styles.field}>
-          Estado
+          <span>Estado</span>
           <select
             className={styles.select}
             value={status ?? ''}
@@ -43,7 +43,7 @@ export function UsersPage() {
         </label>
 
         <label className={styles.field}>
-          Rol
+          <span>Rol</span>
           <select
             className={styles.select}
             value={roleCode ?? ''}

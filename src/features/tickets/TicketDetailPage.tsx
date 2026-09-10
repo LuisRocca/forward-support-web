@@ -31,7 +31,7 @@ export function TicketDetailPage() {
   return <TicketDetailView key={ticketId} ticketId={ticketId} />
 }
 
-function TicketDetailView({ ticketId }: { ticketId: string }) {
+function TicketDetailView({ ticketId }: Readonly<{ ticketId: string }>) {
   const { user } = useSession()
   const load = useCallback(
     (signal: AbortSignal) => getTicket(ticketId, signal),
@@ -131,7 +131,7 @@ function TicketDetailView({ ticketId }: { ticketId: string }) {
   )
 }
 
-function TicketFacts({ ticket }: { ticket: TicketDetail }) {
+function TicketFacts({ ticket }: Readonly<{ ticket: TicketDetail }>) {
   return (
     <section className={styles.card}>
       <h2 className={styles.cardTitle}>Datos</h2>

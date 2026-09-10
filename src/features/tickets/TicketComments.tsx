@@ -19,10 +19,10 @@ import styles from './TicketDetailPage.module.css'
 export function TicketComments({
   ticketId,
   canWriteInternal,
-}: {
+}: Readonly<{
   ticketId: string
   canWriteInternal: boolean
-}) {
+}>) {
   const load = useCallback(
     (signal: AbortSignal) => listComments(ticketId, { limit: 50 }, signal),
     [ticketId],
@@ -64,7 +64,7 @@ export function TicketComments({
   )
 }
 
-function CommentCard({ comment }: { comment: Comment }) {
+function CommentCard({ comment }: Readonly<{ comment: Comment }>) {
   return (
     <article
       className={`${styles.comment} ${comment.isInternal ? styles.commentInternal : ''}`}
@@ -83,11 +83,11 @@ function CommentForm({
   ticketId,
   canWriteInternal,
   onAdded,
-}: {
+}: Readonly<{
   ticketId: string
   canWriteInternal: boolean
   onAdded: () => void
-}) {
+}>) {
   const [body, setBody] = useState('')
   const [isInternal, setIsInternal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -149,7 +149,7 @@ function CommentForm({
             checked={isInternal}
             onChange={(event) => setIsInternal(event.target.checked)}
           />
-          Comentario interno (no visible para el cliente)
+          <span>Comentario interno (no visible para el cliente)</span>
         </label>
       ) : null}
 

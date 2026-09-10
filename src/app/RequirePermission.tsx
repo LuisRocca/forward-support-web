@@ -8,7 +8,7 @@ import { hasAnyPermission } from './navigation.ts'
  * Sin el permiso, a la primera vista permitida en lugar de a una pantalla de
  * error. Es solo interfaz: las vistas mantienen su manejo del 403.
  */
-export function RequirePermission({ anyOf }: { anyOf: readonly Permission[] }) {
+export function RequirePermission({ anyOf }: Readonly<{ anyOf: readonly Permission[] }>) {
   const { user } = useSession()
 
   if (!hasAnyPermission(user?.permissions ?? [], anyOf)) {

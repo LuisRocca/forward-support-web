@@ -1,5 +1,5 @@
 /** Pantalla de espera mientras se resuelve si hay sesión. */
-export function FullPageLoader({ label }: { label: string }) {
+export function FullPageLoader({ label }: Readonly<{ label: string }>) {
   return (
     <div
       role="status"

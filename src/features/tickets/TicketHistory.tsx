@@ -7,7 +7,7 @@ import { STATUS_LABEL } from './labels.ts'
 import { getHistory } from './ticketsApi.ts'
 import styles from './TicketDetailPage.module.css'
 
-export function TicketHistory({ ticketId }: { ticketId: string }) {
+export function TicketHistory({ ticketId }: Readonly<{ ticketId: string }>) {
   const load = useCallback(
     (signal: AbortSignal) => getHistory(ticketId, signal),
     [ticketId],

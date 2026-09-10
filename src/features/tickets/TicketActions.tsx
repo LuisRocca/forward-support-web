@@ -18,13 +18,13 @@ export function TicketActions({
   canAssign,
   onUpdated,
   onConflict,
-}: {
+}: Readonly<{
   ticket: TicketDetail
   canAssign: boolean
   onUpdated: (updated: TicketDetail) => void
   /** Un 409 CONFLICT es un cambio concurrente: el ticket se vuelve a pedir. */
   onConflict: () => void
-}) {
+}>) {
   const targets = ticket.allowedStatusTransitions
   const isClosed = ticket.status === 'closed'
 
@@ -66,13 +66,13 @@ function StatusForm({
   targets,
   onUpdated,
   onConflict,
-}: {
+}: Readonly<{
   ticket: TicketDetail
   /** Destinos permitidos: los decide el servidor, el cliente no replica la matriz. */
   targets: TicketStatus[]
   onUpdated: (updated: TicketDetail) => void
   onConflict: () => void
-}) {
+}>) {
   const [status, setStatus] = useState<TicketStatus | ''>('')
   const [note, setNote] = useState('')
   const [isSaving, setIsSaving] = useState(false)
@@ -148,11 +148,11 @@ function AssignForm({
   ticket,
   onUpdated,
   onConflict,
-}: {
+}: Readonly<{
   ticket: TicketDetail
   onUpdated: (updated: TicketDetail) => void
   onConflict: () => void
-}) {
+}>) {
   const loadAgents = useCallback(
     (signal: AbortSignal) =>
       listUsers({ roleCode: 'agent', status: 'active', limit: 100 }, signal),

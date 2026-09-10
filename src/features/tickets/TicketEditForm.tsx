@@ -19,11 +19,11 @@ export function TicketEditForm({
   ticket,
   onSaved,
   onCancel,
-}: {
+}: Readonly<{
   ticket: TicketDetail
   onSaved: (updated: TicketDetail) => void
   onCancel: () => void
-}) {
+}>) {
   const ids = { title: useId(), description: useId(), priority: useId(), category: useId() }
   const loadCategories = useCallback(() => listCategories(), [])
   const { data: categories } = useAsyncData(loadCategories)

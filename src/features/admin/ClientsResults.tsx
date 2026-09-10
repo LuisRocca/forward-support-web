@@ -10,10 +10,10 @@ import styles from './admin.module.css'
 export function ClientsResults({
   search,
   onlyActive,
-}: {
+}: Readonly<{
   search: string
   onlyActive: boolean
-}) {
+}>) {
   const fetchPage = useCallback(
     (cursor: string | null, signal?: AbortSignal) =>
       listClients(

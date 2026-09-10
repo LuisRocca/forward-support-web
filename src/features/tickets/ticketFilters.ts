@@ -57,5 +57,9 @@ export function paramsFromSearch(search: URLSearchParams): TicketListParams {
 }
 
 function isSort(value: string | null): value is TicketSort {
-  return value !== null && SORTS.some((sort) => sort === value)
+  // `.some` y no `.includes` a propósito: `SORTS.includes(value)` no compila
+  // con un `string` contra la unión `TicketSort` sin forzar el tipo, y el
+  // objetivo de esta función es justo estrechar ese tipo sin forzarlo.
+  // El token de Sonar no puede marcar avisos, así que se silencia aquí.
+  return value !== null && SORTS.some((sort) => sort === value) // NOSONAR: motivo arriba
 }

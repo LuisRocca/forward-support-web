@@ -14,7 +14,7 @@ import { login, logout, refreshSession } from './authApi.ts'
 import { SessionContext } from './sessionContext.ts'
 import type { SessionStatus } from './session.types.ts'
 
-export function SessionProvider({ children }: { children: ReactNode }) {
+export function SessionProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [status, setStatus] = useState<SessionStatus>('loading')
   const [user, setUser] = useState<AuthenticatedUser | null>(null)
   const [endedReason, setEndedReason] = useState<string | null>(null)

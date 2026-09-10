@@ -45,7 +45,7 @@ export function ClientsPage() {
             checked={onlyActive}
             onChange={(event) => setOnlyActive(event.target.checked)}
           />
-          Solo activos
+          <span>Solo activos</span>
         </label>
       </form>
 

@@ -78,11 +78,11 @@ function Tile({
   label,
   value,
   to,
-}: {
+}: Readonly<{
   label: string
   value: number
   to?: string
-}) {
+}>) {
   const content = (
     <>
       <span className={styles.tileValue}>{value}</span>
@@ -104,7 +104,7 @@ interface BreakdownRow {
   value: number
 }
 
-function Breakdown({ title, rows }: { title: string; rows: BreakdownRow[] }) {
+function Breakdown({ title, rows }: Readonly<{ title: string; rows: BreakdownRow[] }>) {
   const max = Math.max(1, ...rows.map((row) => row.value))
 
   return (
@@ -130,9 +130,9 @@ function Breakdown({ title, rows }: { title: string; rows: BreakdownRow[] }) {
 
 function AverageResolution({
   data,
-}: {
+}: Readonly<{
   data: DashboardMetrics['avgResolutionHoursByPriority']
-}) {
+}>) {
   if (!data || data.length === 0) return null
 
   return (

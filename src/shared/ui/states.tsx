@@ -2,7 +2,7 @@ import { errorMessage, reportableTraceId } from '../api/errorMessage.ts'
 import { Button } from './Button.tsx'
 import styles from './ui.module.css'
 
-export function LoadingState({ label }: { label: string }) {
+export function LoadingState({ label }: Readonly<{ label: string }>) {
   return (
     <p className={styles.state} role="status" aria-live="polite">
       {label}
@@ -10,7 +10,7 @@ export function LoadingState({ label }: { label: string }) {
   )
 }
 
-export function EmptyState({ label }: { label: string }) {
+export function EmptyState({ label }: Readonly<{ label: string }>) {
   return <p className={styles.state}>{label}</p>
 }
 
@@ -18,10 +18,10 @@ export function EmptyState({ label }: { label: string }) {
 export function ErrorState({
   error,
   onRetry,
-}: {
+}: Readonly<{
   error: unknown
   onRetry?: () => void
-}) {
+}>) {
   const traceId = reportableTraceId(error)
 
   return (

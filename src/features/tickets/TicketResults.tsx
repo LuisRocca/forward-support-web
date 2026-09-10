@@ -23,7 +23,7 @@ import styles from './TicketListPage.module.css'
  * Resultados del listado. Se remonta con una `key` cuando cambian los filtros,
  * de modo que la paginación acumulada empieza limpia sin resetear estado a mano.
  */
-export function TicketResults({ params }: { params: TicketListParams }) {
+export function TicketResults({ params }: Readonly<{ params: TicketListParams }>) {
   const fetchPage = useCallback(
     (cursor: string | null, signal?: AbortSignal) =>
       listTickets({ ...params, cursor }, signal),
@@ -78,7 +78,7 @@ export function TicketResults({ params }: { params: TicketListParams }) {
   )
 }
 
-function TicketRow({ ticket }: { ticket: TicketSummary }) {
+function TicketRow({ ticket }: Readonly<{ ticket: TicketSummary }>) {
   const isStale =
     isOpen(ticket.status) && hoursSince(ticket.lastActivityAt) > STALE_HOURS
 

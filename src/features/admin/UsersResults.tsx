@@ -19,7 +19,7 @@ interface Props {
 }
 
 /** Se remonta con una `key` al cambiar los filtros: la paginación empieza limpia. */
-export function UsersResults({ status, roleCode, currentUserId, canManage }: Props) {
+export function UsersResults({ status, roleCode, currentUserId, canManage }: Readonly<Props>) {
   const fetchPage = useCallback(
     (cursor: string | null, signal?: AbortSignal) =>
       listUsers({ status, roleCode, cursor }, signal),
@@ -152,13 +152,13 @@ function UserAction({
   isPending,
   onBlock,
   onUnblock,
-}: {
+}: Readonly<{
   user: User
   isSelf: boolean
   isPending: boolean
   onBlock: () => void
   onUnblock: () => void
-}) {
+}>) {
   // Bloquearse a uno mismo dejaría el sistema sin quien pueda desbloquear.
   if (isSelf) return <span className={styles.muted}>Tu cuenta</span>
 

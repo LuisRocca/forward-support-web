@@ -15,11 +15,11 @@ export function BlockUserDialog({
   user,
   onBlocked,
   onCancel,
-}: {
+}: Readonly<{
   user: User
   onBlocked: (updated: User) => void
   onCancel: () => void
-}) {
+}>) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const titleId = useId()
   const reasonId = useId()
@@ -77,7 +77,7 @@ export function BlockUserDialog({
         ) : null}
 
         <label className={styles.field} htmlFor={reasonId}>
-          Motivo (obligatorio)
+          <span>Motivo (obligatorio)</span>
           <textarea
             id={reasonId}
             className={styles.textarea}

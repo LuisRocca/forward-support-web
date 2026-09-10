@@ -146,7 +146,7 @@ export function TicketListPage() {
                   checked={searchParams.get('stale') === '1'}
                   onChange={(event) => toggleFlag('stale', event.target.checked)}
                 />
-                Estancados (+{STALE_HOURS} h)
+                <span>Estancados (+{STALE_HOURS} h)</span>
               </label>
               <label className={styles.option}>
                 <input
@@ -156,7 +156,7 @@ export function TicketListPage() {
                     toggleFlag('unassigned', event.target.checked)
                   }
                 />
-                Sin asignar
+                <span>Sin asignar</span>
               </label>
             </div>
           </fieldset>
