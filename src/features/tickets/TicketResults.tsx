@@ -1,6 +1,8 @@
+import { useCallback } from 'react'
 import { Link } from 'react-router'
 import type { TicketSummary } from '../../shared/api/contract.ts'
 import { formatDateTime, hoursSince } from '../../shared/format/datetime.ts'
+import { useKeysetList } from '../../shared/hooks/useKeysetList.ts'
 import { ticketDetailPath } from '../../shared/routing/paths.ts'
 import { Badge } from '../../shared/ui/Badge.tsx'
 import { Button } from '../../shared/ui/Button.tsx'
@@ -12,8 +14,8 @@ import {
   statusTone,
 } from './labels.ts'
 import { STALE_HOURS } from './ticketFilters.ts'
+import { listTickets } from './ticketsApi.ts'
 import type { TicketListParams } from './ticketsApi.ts'
-import { useTicketList } from './useTicketList.ts'
 import styles from './TicketListPage.module.css'
 
 /**
@@ -21,8 +23,13 @@ import styles from './TicketListPage.module.css'
  * de modo que la paginación acumulada empieza limpia sin resetear estado a mano.
  */
 export function TicketResults({ params }: { params: TicketListParams }) {
+  const fetchPage = useCallback(
+    (cursor: string | null, signal?: AbortSignal) =>
+      listTickets({ ...params, cursor }, signal),
+    [params],
+  )
   const { items, pageInfo, error, isLoading, isLoadingMore, loadMore } =
-    useTicketList(params)
+    useKeysetList(fetchPage)
 
   if (isLoading) return <LoadingState label="Cargando tickets…" />
   if (error) return <ErrorState error={error} />
