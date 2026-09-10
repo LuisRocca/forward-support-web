@@ -16,6 +16,7 @@ import type {
   TicketDetail,
   TicketPriority,
   TicketStatus,
+  UpdateTicketRequest,
 } from '../../shared/api/contract.ts'
 import { request } from '../../shared/api/httpClient.ts'
 
@@ -72,6 +73,18 @@ export async function createTicket(
 ): Promise<TicketDetail> {
   return await request('/tickets', {
     method: 'POST',
+    body,
+    schema: ticketDetailSchema,
+  })
+}
+
+/** Solo admin, o el agente asignado. El supervisor no edita (403). */
+export async function updateTicket(
+  ticketId: string,
+  body: UpdateTicketRequest,
+): Promise<TicketDetail> {
+  return await request(`/tickets/${ticketId}`, {
+    method: 'PATCH',
     body,
     schema: ticketDetailSchema,
   })

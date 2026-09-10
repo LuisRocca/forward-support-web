@@ -11,6 +11,9 @@ export const AUTH_TOKEN_EXPIRED = 'AUTH_TOKEN_EXPIRED'
 export const AUTH_TOKEN_REVOKED = 'AUTH_TOKEN_REVOKED'
 export const AUTH_USER_BLOCKED = 'AUTH_USER_BLOCKED'
 
+/** 409 por concurrencia: el recurso cambió entre la lectura y la escritura. */
+export const CONFLICT = 'CONFLICT'
+
 /** No se pudo hablar con la API (red caída, CORS, servidor apagado). */
 export const NETWORK_ERROR = 'NETWORK_ERROR'
 /** La API respondió algo que no encaja con el contrato. */

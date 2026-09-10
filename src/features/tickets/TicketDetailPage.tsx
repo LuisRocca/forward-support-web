@@ -4,6 +4,7 @@ import type { TicketDetail } from '../../shared/api/contract.ts'
 import { formatDateTime } from '../../shared/format/datetime.ts'
 import { useAsyncData } from '../../shared/hooks/useAsyncData.ts'
 import { Badge } from '../../shared/ui/Badge.tsx'
+import { Button } from '../../shared/ui/Button.tsx'
 import { ErrorState, LoadingState } from '../../shared/ui/states.tsx'
 import { hasAnyRole } from '../auth/roles.ts'
 import { useSession } from '../auth/useSession.ts'
@@ -15,6 +16,7 @@ import {
 } from './labels.ts'
 import { TicketActions } from './TicketActions.tsx'
 import { TicketComments } from './TicketComments.tsx'
+import { TicketEditForm } from './TicketEditForm.tsx'
 import { TicketHistory } from './TicketHistory.tsx'
 import { getTicket } from './ticketsApi.ts'
 import styles from './TicketDetailPage.module.css'
@@ -37,15 +39,38 @@ function TicketDetailView({ ticketId }: { ticketId: string }) {
   )
   const { data, error, isLoading, reload } = useAsyncData(load)
   const [updated, setUpdated] = useState<TicketDetail | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  // Cambia con cada acción para que el historial se vuelva a pedir.
+  const [revision, setRevision] = useState(0)
 
   const ticket = updated ?? data
 
-  if (isLoading) return <LoadingState label="Cargando ticket…" />
-  if (error || !ticket) return <ErrorState error={error} onRetry={reload} />
+  function handleUpdated(next: TicketDetail) {
+    setUpdated(next)
+    setIsEditing(false)
+    setRevision((value) => value + 1)
+  }
+
+  function handleConflict() {
+    setUpdated(null)
+    setRevision((value) => value + 1)
+    reload()
+  }
+
+  // El cargador solo tapa la carga inicial; una recarga tras un 409 no borra
+  // la página ni el mensaje de error del formulario.
+  if (isLoading && !ticket) return <LoadingState label="Cargando ticket…" />
+  if (!ticket) return <ErrorState error={error} onRetry={reload} />
 
   // Marcar un comentario como interno y reasignar están reservados a admin y
   // supervisor. Es solo interfaz: el servidor lo vuelve a comprobar.
   const isSupervisor = hasAnyRole(user, ['admin', 'supervisor'])
+  const isAdmin = hasAnyRole(user, ['admin'])
+  // Editar: el admin, o el agente asignado. El supervisor no edita (contrato).
+  // Un ticket cerrado no se edita (409 TICKET_CLOSED): reabrir es del admin.
+  const canEdit =
+    ticket.status !== 'closed' &&
+    (isAdmin || (hasAnyRole(user, ['agent']) && ticket.assignedTo?.id === user?.id))
 
   return (
     <section className={styles.page}>
@@ -66,8 +91,23 @@ function TicketDetailView({ ticketId }: { ticketId: string }) {
       <div className={styles.columns}>
         <div className={styles.page}>
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Descripción</h2>
-            <p className={styles.description}>{ticket.description}</p>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}>
+                {isEditing ? 'Editar ticket' : 'Descripción'}
+              </h2>
+              {canEdit && !isEditing ? (
+                <Button onClick={() => setIsEditing(true)}>Editar</Button>
+              ) : null}
+            </div>
+            {isEditing ? (
+              <TicketEditForm
+                ticket={ticket}
+                onSaved={handleUpdated}
+                onCancel={() => setIsEditing(false)}
+              />
+            ) : (
+              <p className={styles.description}>{ticket.description}</p>
+            )}
           </section>
 
           <TicketComments
@@ -81,9 +121,10 @@ function TicketDetailView({ ticketId }: { ticketId: string }) {
           <TicketActions
             ticket={ticket}
             canAssign={isSupervisor}
-            onUpdated={setUpdated}
+            onUpdated={handleUpdated}
+            onConflict={handleConflict}
           />
-          <TicketHistory ticketId={ticket.id} />
+          <TicketHistory key={revision} ticketId={ticket.id} />
         </div>
       </div>
     </section>

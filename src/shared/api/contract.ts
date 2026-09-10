@@ -111,6 +111,12 @@ export const ticketDetailSchema = ticketSummarySchema.extend({
    * una agregación por fila en la ruta más caliente de la aplicación.
    */
   commentCount: z.number(),
+  /**
+   * Destinos de estado que QUIEN PREGUNTA puede aplicar ahora (máquina de
+   * estados ∩ rol ∩ pertenencia), calculados en el servidor. Vacío si no puede
+   * cambiar el estado. El cliente no replica la matriz.
+   */
+  allowedStatusTransitions: z.array(ticketStatusSchema),
   createdBy: userRefSchema,
   resolvedBy: userRefSchema.nullable().optional(),
   firstResponseAt: dateTime.nullable().optional(),
@@ -185,6 +191,24 @@ export const createTicketRequestSchema = z.object({
   assignedToUserId: uuid.nullable().optional(),
 })
 
+/** PATCH parcial: al menos un campo. Estado y asignación van por sus endpoints. */
+export const updateTicketRequestSchema = z
+  .object({
+    title: z
+      .string()
+      .min(5, 'El título debe tener al menos 5 caracteres')
+      .max(200, 'El título no puede pasar de 200 caracteres'),
+    description: z
+      .string()
+      .min(10, 'La descripción debe tener al menos 10 caracteres')
+      .max(10000, 'La descripción no puede pasar de 10000 caracteres'),
+    priority: ticketPrioritySchema,
+    categoryId: uuid.nullable(),
+    dueAt: dateTime.nullable(),
+  })
+  .partial()
+  .refine((body) => Object.keys(body).length > 0, 'No hay cambios que guardar')
+
 export const assignTicketRequestSchema = z.object({
   assignedToUserId: uuid.min(1, 'Selecciona a quién se asigna'),
   reason: z.string().max(255, 'El motivo no puede pasar de 255 caracteres').optional(),
@@ -213,6 +237,7 @@ export const blockUserRequestSchema = z.object({
 
 export type BlockUserRequest = z.infer<typeof blockUserRequestSchema>
 export type CreateTicketRequest = z.infer<typeof createTicketRequestSchema>
+export type UpdateTicketRequest = z.infer<typeof updateTicketRequestSchema>
 export type AssignTicketRequest = z.infer<typeof assignTicketRequestSchema>
 export type ChangeStatusRequest = z.infer<typeof changeStatusRequestSchema>
 export type CreateCommentRequest = z.infer<typeof createCommentRequestSchema>

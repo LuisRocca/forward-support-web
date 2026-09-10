@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { TicketDetail, TicketStatus } from '../../shared/api/contract.ts'
+import { CONFLICT, isApiError } from '../../shared/api/apiError.ts'
 import { errorMessage } from '../../shared/api/errorMessage.ts'
 import { useAsyncData } from '../../shared/hooks/useAsyncData.ts'
 import { Button } from '../../shared/ui/Button.tsx'
@@ -16,28 +17,63 @@ export function TicketActions({
   ticket,
   canAssign,
   onUpdated,
+  onConflict,
 }: {
   ticket: TicketDetail
   canAssign: boolean
   onUpdated: (updated: TicketDetail) => void
+  /** Un 409 CONFLICT es un cambio concurrente: el ticket se vuelve a pedir. */
+  onConflict: () => void
 }) {
+  const targets = ticket.allowedStatusTransitions
+  const isClosed = ticket.status === 'closed'
+
+  if (targets.length === 0 && !canAssign) return null
+
   return (
     <section className={styles.card}>
       <h2 className={styles.cardTitle}>Acciones</h2>
-      <StatusForm ticket={ticket} onUpdated={onUpdated} />
-      {canAssign ? <AssignForm ticket={ticket} onUpdated={onUpdated} /> : null}
+      {targets.length > 0 ? (
+        <StatusForm
+          ticket={ticket}
+          targets={targets}
+          onUpdated={onUpdated}
+          onConflict={onConflict}
+        />
+      ) : null}
+      {canAssign && isClosed ? (
+        <p className={styles.muted}>Un ticket cerrado no se reasigna: primero hay que reabrirlo.</p>
+      ) : null}
+      {canAssign && !isClosed ? (
+        <AssignForm ticket={ticket} onUpdated={onUpdated} onConflict={onConflict} />
+      ) : null}
     </section>
   )
 }
 
+/** Solo un CONFLICT recarga; transición inválida o ticket cerrado solo informan. */
+function reportError(
+  cause: unknown,
+  setError: (error: unknown) => void,
+  onConflict: () => void,
+) {
+  setError(cause)
+  if (isApiError(cause) && cause.code === CONFLICT) onConflict()
+}
+
 function StatusForm({
   ticket,
+  targets,
   onUpdated,
+  onConflict,
 }: {
   ticket: TicketDetail
+  /** Destinos permitidos: los decide el servidor, el cliente no replica la matriz. */
+  targets: TicketStatus[]
   onUpdated: (updated: TicketDetail) => void
+  onConflict: () => void
 }) {
-  const [status, setStatus] = useState<TicketStatus>(ticket.status)
+  const [status, setStatus] = useState<TicketStatus | ''>('')
   const [note, setNote] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<unknown>(null)
@@ -48,10 +84,12 @@ function StatusForm({
     setIsSaving(true)
     try {
       // Una transición no permitida responde 409 y su mensaje se muestra tal cual.
+      if (!status) return
       onUpdated(await changeTicketStatus(ticket.id, { status, note: note || undefined }))
+      setStatus('')
       setNote('')
     } catch (cause) {
-      setError(cause)
+      reportError(cause, setError, onConflict)
     } finally {
       setIsSaving(false)
     }
@@ -72,9 +110,10 @@ function StatusForm({
         id="status-select"
         className={styles.select}
         value={status}
-        onChange={(event) => setStatus(asStatus(event.target.value, status))}
+        onChange={(event) => setStatus(asStatus(event.target.value))}
       >
-        {STATUS_ORDER.map((option) => (
+        <option value="">Selecciona el nuevo estado…</option>
+        {targets.map((option) => (
           <option key={option} value={option}>
             {STATUS_LABEL[option]}
           </option>
@@ -96,7 +135,7 @@ function StatusForm({
         <Button
           type="submit"
           variant="primary"
-          disabled={isSaving || status === ticket.status}
+          disabled={isSaving || !status}
         >
           {isSaving ? 'Guardando…' : 'Aplicar estado'}
         </Button>
@@ -108,9 +147,11 @@ function StatusForm({
 function AssignForm({
   ticket,
   onUpdated,
+  onConflict,
 }: {
   ticket: TicketDetail
   onUpdated: (updated: TicketDetail) => void
+  onConflict: () => void
 }) {
   const loadAgents = useCallback(
     (signal: AbortSignal) =>
@@ -141,7 +182,7 @@ function AssignForm({
       )
       setReason('')
     } catch (cause) {
-      setError(cause)
+      reportError(cause, setError, onConflict)
     } finally {
       setIsSaving(false)
     }
@@ -201,6 +242,7 @@ function AssignForm({
 }
 
 /** El valor de un `<select>` es string; solo se acepta si es del contrato. */
-function asStatus(value: string, fallback: TicketStatus): TicketStatus {
-  return STATUS_ORDER.find((status) => status === value) ?? fallback
+function asStatus(value: string): TicketStatus | '' {
+  return STATUS_ORDER.find((status) => status === value) ?? ''
 }
+
