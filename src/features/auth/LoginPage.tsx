@@ -50,7 +50,7 @@ export function LoginPage() {
   return (
     <div className={styles.page}>
       <form className={styles.card} onSubmit={(e) => void handleSubmit(e)}>
-        <span className={styles.mark} aria-hidden="true" />
+        <img className={styles.mark} src="/favicon.svg" alt="" width={40} height={40} />
         <h1 className={styles.title}>Plataforma de Soporte</h1>
 
         {endedReason && !error ? (

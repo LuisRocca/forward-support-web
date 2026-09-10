@@ -30,7 +30,7 @@ export function AppLayout() {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden="true" />
+          <img className={styles.brandMark} src="/favicon.svg" alt="" width={28} height={28} />
           <span>Plataforma de Soporte</span>
         </div>
 
