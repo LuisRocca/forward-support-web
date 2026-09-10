@@ -1,6 +1,6 @@
 import styles from './ui.module.css'
 
-export type BadgeTone = 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+export type BadgeTone = 'neutral' | 'info' | 'accent' | 'warning' | 'danger' | 'success'
 
 export function Badge({
   children,

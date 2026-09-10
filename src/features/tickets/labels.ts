@@ -45,7 +45,7 @@ export const PRIORITY_ORDER: TicketPriority[] = [
 
 const STATUS_TONE: Record<TicketStatus, BadgeTone> = {
   open: 'info',
-  in_progress: 'warning',
+  in_progress: 'accent',
   pending_customer: 'neutral',
   resolved: 'success',
   closed: 'neutral',
