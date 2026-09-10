@@ -99,7 +99,6 @@ export const ticketSummarySchema = z.object({
   client: clientSchema,
   category: ticketCategorySchema.nullable().optional(),
   assignedTo: userRefSchema.nullable().optional(),
-  commentCount: z.number().optional(),
   createdAt: dateTime,
   /** Última actividad de cualquier tipo, comentarios incluidos. No es `updatedAt`. */
   lastActivityAt: dateTime,
@@ -107,6 +106,11 @@ export const ticketSummarySchema = z.object({
 
 export const ticketDetailSchema = ticketSummarySchema.extend({
   description: z.string(),
+  /**
+   * Solo en el detalle: ahí es un conteo sobre una fila. En el listado sería
+   * una agregación por fila en la ruta más caliente de la aplicación.
+   */
+  commentCount: z.number(),
   createdBy: userRefSchema,
   resolvedBy: userRefSchema.nullable().optional(),
   firstResponseAt: dateTime.nullable().optional(),

@@ -117,6 +117,9 @@ function TicketFacts({ ticket }: { ticket: TicketDetail }) {
         <dt>Resuelto por</dt>
         <dd>{ticket.resolvedBy?.fullName ?? '—'}</dd>
 
+        <dt>Comentarios</dt>
+        <dd>{ticket.commentCount}</dd>
+
         <dt>Reaperturas</dt>
         <dd>{ticket.reopenedCount}</dd>
 
