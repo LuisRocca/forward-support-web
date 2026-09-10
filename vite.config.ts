@@ -12,5 +12,12 @@ export default defineConfig({
   test: {
     // httpClient lee la URL de la API al cargar el módulo.
     env: { VITE_API_URL: 'http://api.test' },
+    coverage: {
+      provider: 'v8',
+      // lcov lo consume SonarQube (sonar.javascript.lcov.reportPaths).
+      reporter: ['text-summary', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/shared/api/testing.ts', 'src/env.d.ts'],
+    },
   },
 })
