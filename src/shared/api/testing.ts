@@ -1,5 +1,6 @@
 import { vi } from 'vitest'
 import { ApiError } from './apiError.ts'
+import type { TicketDetail } from './contract.ts'
 
 /** Utilidades solo para tests de la capa de datos. */
 
@@ -52,4 +53,25 @@ export const sessionUser = {
 
 export function sessionBody(accessToken: string) {
   return { accessToken, expiresIn: 900, user: sessionUser }
+}
+
+/** Detalle de ticket válido según el contrato, para tests de componente. */
+export const ticketDetailFixture: TicketDetail = {
+  id: 'ticket-1',
+  code: 'TCK-000001',
+  title: 'El informe mensual no carga',
+  status: 'open',
+  priority: 'medium',
+  client: { id: 'client-1', name: 'Acme S.A.', isActive: true },
+  category: null,
+  assignedTo: null,
+  createdAt: '2026-01-01T00:00:00Z',
+  lastActivityAt: '2026-01-01T00:00:00Z',
+  description: 'El informe se queda cargando indefinidamente.',
+  commentCount: 0,
+  allowedStatusTransitions: ['in_progress', 'resolved'],
+  createdBy: { id: 'user-1', fullName: 'Agente de prueba' },
+  reopenedCount: 0,
+  reassignmentCount: 0,
+  updatedAt: '2026-01-01T00:00:00Z',
 }
