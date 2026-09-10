@@ -12,7 +12,7 @@ export function ClientsPage() {
 
   // La búsqueda se aplica al enviar, no con cada tecla: una petición por
   // búsqueda y no una por carácter.
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setSearch(draft.trim())
   }

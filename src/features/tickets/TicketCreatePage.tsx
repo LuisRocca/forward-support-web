@@ -65,7 +65,7 @@ export function TicketCreatePage() {
   const fieldErrors = { ...localErrors, ...fieldErrorsOf(error) }
   const traceId = reportableTraceId(error)
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
 
@@ -154,7 +154,7 @@ export function TicketCreatePage() {
                 encontrar el resto.
               </span>
             ) : null}
-            {clients && clients.data.length === 0 ? (
+            {clients?.data.length === 0 ? (
               <span className={styles.hint}>Ningún cliente activo coincide.</span>
             ) : null}
             {clientsError ? (

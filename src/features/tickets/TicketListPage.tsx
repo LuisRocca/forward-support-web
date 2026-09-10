@@ -36,7 +36,7 @@ export function TicketListPage() {
 
   // La búsqueda se aplica al enviar: con 100.000 tickets, una petición por
   // tecla es carga inútil contra la API.
-  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+  function handleSearch(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     const raw = new FormData(event.currentTarget).get('search')
     const value = typeof raw === 'string' ? raw.trim() : ''

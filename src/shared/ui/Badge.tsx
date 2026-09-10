@@ -9,8 +9,9 @@ export function Badge({
   children: string
   tone?: BadgeTone
 }) {
+  const toneClass = styles[`tone-${tone}`] ?? ''
   return (
-    <span className={`${styles.badge} ${styles[`tone-${tone}`] ?? ''}`}>
+    <span className={`${styles.badge} ${toneClass}`}>
       {children}
     </span>
   )

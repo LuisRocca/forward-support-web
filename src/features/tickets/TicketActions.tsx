@@ -78,7 +78,7 @@ function StatusForm({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
     setIsSaving(true)
@@ -167,7 +167,7 @@ function AssignForm({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!assignedToUserId) return
 

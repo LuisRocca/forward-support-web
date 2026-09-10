@@ -26,7 +26,7 @@ export const STALE_HOURS = 48
 
 /**
  * Los filtros viven en la URL: así una búsqueda se puede compartir y el botón
- * de atrás funciona. Todo lo que llega de la URL es entrada externa y se
+ * de atrás funciona. Cualquier valor de la URL es entrada externa y se
  * valida contra el contrato antes de mandarlo a la API.
  */
 export function paramsFromSearch(search: URLSearchParams): TicketListParams {

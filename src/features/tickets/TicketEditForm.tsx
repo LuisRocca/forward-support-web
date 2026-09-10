@@ -38,7 +38,7 @@ export function TicketEditForm({
 
   const fieldErrors = { ...localErrors, ...fieldErrorsOf(error) }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
 

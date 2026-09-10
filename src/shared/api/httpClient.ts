@@ -16,7 +16,14 @@ import {
  * entrada externa y se comprueba en el borde, no dentro de cada componente.
  */
 
-const baseUrl = import.meta.env.VITE_API_URL.replace(/\/+$/, '')
+const baseUrl = withoutTrailingSlashes(import.meta.env.VITE_API_URL)
+
+/** Sin regex: `/\/+$/` retrocede en tiempo cuadrático con muchas barras. */
+function withoutTrailingSlashes(url: string): string {
+  let end = url.length
+  while (end > 0 && url[end - 1] === '/') end -= 1
+  return url.slice(0, end)
+}
 
 /**
  * El access token vive en memoria, no en localStorage: lo que hay en

@@ -33,7 +33,7 @@ export function BlockUserDialog({
     dialogRef.current?.showModal()
   }, [])
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
 
