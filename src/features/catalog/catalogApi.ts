@@ -11,7 +11,12 @@ const clientPageSchema = pageSchema(clientSchema)
 const categoriesSchema = z.array(ticketCategorySchema)
 
 export async function listClients(
-  params: { search?: string; isActive?: boolean; limit?: number },
+  params: {
+    search?: string
+    isActive?: boolean
+    limit?: number
+    cursor?: string | null
+  },
   signal?: AbortSignal,
 ) {
   return await request('/clients', {

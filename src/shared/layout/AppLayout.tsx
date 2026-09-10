@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router'
+import { hasAnyRole } from '../../features/auth/roles.ts'
 import { useSession } from '../../features/auth/useSession.ts'
 import { paths } from '../routing/paths.ts'
 import styles from './AppLayout.module.css'
@@ -11,6 +12,10 @@ const NAV_ITEMS = [
 
 export function AppLayout() {
   const { user, signOut } = useSession()
+  // Solo decide qué se pinta; la API responde 403 a quien no tenga permiso.
+  const navItems = hasAnyRole(user, ['admin', 'supervisor'])
+    ? [...NAV_ITEMS, { to: '/admin', label: 'Administración' }]
+    : NAV_ITEMS
 
   return (
     <div className={styles.shell}>
@@ -18,7 +23,7 @@ export function AppLayout() {
         <span className={styles.brand}>Plataforma de Soporte</span>
 
         <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

@@ -5,6 +5,8 @@ export const paths = {
   tickets: '/tickets',
   ticketNew: '/tickets/nuevo',
   ticketDetail: '/tickets/:ticketId',
+  adminUsers: '/admin/usuarios',
+  adminClients: '/admin/clientes',
 } as const
 
 export function ticketDetailPath(ticketId: string): string {

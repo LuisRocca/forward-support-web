@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router'
+import { ClientsPage } from '../features/admin/ClientsPage.tsx'
+import { UsersPage } from '../features/admin/UsersPage.tsx'
 import { LoginPage } from '../features/auth/LoginPage.tsx'
 import { DashboardPage } from '../features/dashboard/DashboardPage.tsx'
 import { TicketCreatePage } from '../features/tickets/TicketCreatePage.tsx'
@@ -22,6 +24,12 @@ export function AppRoutes() {
           <Route path={paths.tickets} element={<TicketListPage />} />
           <Route path={paths.ticketNew} element={<TicketCreatePage />} />
           <Route path={paths.ticketDetail} element={<TicketDetailPage />} />
+          <Route
+            path="/admin"
+            element={<Navigate to={paths.adminUsers} replace />}
+          />
+          <Route path={paths.adminUsers} element={<UsersPage />} />
+          <Route path={paths.adminClients} element={<ClientsPage />} />
         </Route>
       </Route>
 

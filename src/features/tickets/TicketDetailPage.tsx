@@ -5,6 +5,7 @@ import { formatDateTime } from '../../shared/format/datetime.ts'
 import { useAsyncData } from '../../shared/hooks/useAsyncData.ts'
 import { Badge } from '../../shared/ui/Badge.tsx'
 import { ErrorState, LoadingState } from '../../shared/ui/states.tsx'
+import { hasAnyRole } from '../auth/roles.ts'
 import { useSession } from '../auth/useSession.ts'
 import {
   PRIORITY_LABEL,
@@ -44,9 +45,7 @@ function TicketDetailView({ ticketId }: { ticketId: string }) {
 
   // Marcar un comentario como interno y reasignar están reservados a admin y
   // supervisor. Es solo interfaz: el servidor lo vuelve a comprobar.
-  const isSupervisor =
-    user?.roles.includes('admin') === true ||
-    user?.roles.includes('supervisor') === true
+  const isSupervisor = hasAnyRole(user, ['admin', 'supervisor'])
 
   return (
     <section className={styles.page}>

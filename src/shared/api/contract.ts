@@ -203,6 +203,15 @@ export const createCommentRequestSchema = z.object({
   isInternal: z.boolean(),
 })
 
+export const blockUserRequestSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(3, 'El motivo debe tener al menos 3 caracteres')
+    .max(255, 'El motivo no puede pasar de 255 caracteres'),
+})
+
+export type BlockUserRequest = z.infer<typeof blockUserRequestSchema>
 export type CreateTicketRequest = z.infer<typeof createTicketRequestSchema>
 export type AssignTicketRequest = z.infer<typeof assignTicketRequestSchema>
 export type ChangeStatusRequest = z.infer<typeof changeStatusRequestSchema>
