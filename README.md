@@ -1,7 +1,5 @@
 # Plataforma de Soporte — Frontend
 
-[![CI](https://github.com/LuisRocca/forward-support-web/actions/workflows/ci.yml/badge.svg)](https://github.com/LuisRocca/forward-support-web/actions/workflows/ci.yml)
-
 Interfaz de operación para la gestión de tickets de soporte.
 
 Prueba técnica — Tech Lead Full Stack JavaScript.
@@ -49,8 +47,8 @@ contra la API, no se compila en el cliente.
 - Creación de ticket — formulario validado contra el contrato
 - Administración — usuarios y clientes, visibles según permisos
 
-El CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) ejecuta lint, tests y
-build en cada push y pull request.
+El pipeline de CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml), de
+lanzamiento manual) ejecuta lint, tests y build.
 
 `pnpm test` ejecuta la suite de interfaz (Vitest + Testing Library); los fallos
 no triviales encontrados por el camino están en [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md).
