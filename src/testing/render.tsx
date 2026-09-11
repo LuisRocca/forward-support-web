@@ -10,7 +10,8 @@ import { LocationProbe } from './LocationProbe.tsx'
 interface Options {
   user?: AuthenticatedUser | null
   status?: SessionStatus
-  route?: string
+  /** URL inicial; admite estado de navegación, como el destino que guarda el login. */
+  route?: string | { pathname: string; state?: unknown }
   /** Patrón de ruta con el que se monta la vista, p. ej. `/tickets/:ticketId`. */
   path?: string
 }

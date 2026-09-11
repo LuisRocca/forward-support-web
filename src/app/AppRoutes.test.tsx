@@ -64,6 +64,25 @@ describe('rutas y navegación por permisos', () => {
   })
 })
 
+describe('vuelta tras iniciar sesión', () => {
+  it('con sesión, el login devuelve al destino que se guardó al entrar', async () => {
+    renderRoutes(<AppRoutes />, {
+      route: { pathname: '/login', state: { from: '/tickets?status=open' } },
+      user: AGENT,
+    })
+
+    await waitFor(() => expect(location()).toBe('/tickets?status=open'))
+  })
+
+  it('una cuenta sin ningún permiso ve un aviso en lugar de una vista vacía', async () => {
+    renderRoutes(<AppRoutes />, { route: '/', user: { ...AGENT, permissions: [] } })
+
+    expect(
+      await screen.findByText('Tu cuenta no tiene acceso a ninguna vista. Contacta con un administrador.'),
+    ).toBeTruthy()
+  })
+})
+
 describe('cerrar sesión', () => {
   it('pide confirmación y solo cierra si se confirma', async () => {
     const { session } = renderRoutes(<AppRoutes />, { route: '/tickets', user: AGENT })
