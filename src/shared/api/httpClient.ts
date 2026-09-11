@@ -188,7 +188,10 @@ async function parseResponse<T>(
 }
 
 function buildUrl(path: string, query?: Record<string, QueryValue>): string {
-  const url = new URL(`${baseUrl}${path}`)
+  // La base admite una URL relativa ("/api") para servir front y API desde el
+  // mismo dominio; con una absoluta, el segundo argumento se ignora. Sin
+  // `location` (tests en Node) solo vale la absoluta.
+  const url = new URL(`${baseUrl}${path}`, globalThis.location?.origin)
 
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value === null || value === undefined) continue
