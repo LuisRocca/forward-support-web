@@ -36,7 +36,7 @@ contra la API, no se compila en el cliente.
 
 | Variable | Descripción |
 |---|---|
-| `VITE_API_URL` | URL base de la API |
+| `VITE_API_URL` | URL base de la API. Absoluta en local (`http://localhost:3000`); relativa (`/api`) cuando front y API comparten dominio, como en el despliegue de `api_forward/infra` |
 
 ## Vistas previstas
 
