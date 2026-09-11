@@ -59,7 +59,7 @@ export function setSessionHandlers(next: SessionHandlers | null): void {
 
 type QueryValue = string | number | boolean | string[] | null | undefined
 
-export interface RequestOptions<T> {
+interface RequestOptions<T> {
   /** Esquema del contrato con el que se valida la respuesta. */
   schema: z.ZodType<T>
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'

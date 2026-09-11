@@ -30,7 +30,7 @@ export const STATUS_ORDER: TicketStatus[] = [
  * cierre y no requiere acción, así que no cuenta. Estancado y sin asignar son
  * siempre subconjuntos de esto.
  */
-export const OPEN_STATUSES: TicketStatus[] = ['open', 'in_progress', 'pending_customer']
+const OPEN_STATUSES: TicketStatus[] = ['open', 'in_progress', 'pending_customer']
 
 export function isOpen(status: TicketStatus): boolean {
   return OPEN_STATUSES.includes(status)

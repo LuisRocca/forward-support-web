@@ -26,7 +26,7 @@ export interface NavEntry {
   anyOf: readonly Permission[]
 }
 
-export const NAV_ENTRIES: readonly NavEntry[] = [
+const NAV_ENTRIES: readonly NavEntry[] = [
   { to: paths.dashboard, label: 'Dashboard', icon: 'dashboard', anyOf: AREA_PERMISSIONS.dashboard },
   { to: paths.tickets, label: 'Tickets', icon: 'tickets', anyOf: AREA_PERMISSIONS.tickets },
   { to: paths.ticketNew, label: 'Nuevo ticket', icon: 'new', anyOf: AREA_PERMISSIONS.ticketCreate },
