@@ -1,9 +1,10 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { Suspense, useLayoutEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { isEntryActive, visibleEntries } from '../../app/navigation.ts'
 import { useSession } from '../../features/auth/useSession.ts'
 import { ROLE_LABEL } from '../../features/users/labels.ts'
 import { ConfirmDialog } from '../ui/ConfirmDialog.tsx'
+import { LoadingState } from '../ui/states.tsx'
 import { NavIcon } from './NavIcon.tsx'
 import styles from './AppLayout.module.css'
 
@@ -75,7 +76,9 @@ export function AppLayout() {
       <main className={styles.main}>
         {/* La clave reinicia la entrada suave en cada cambio de vista. */}
         <div key={pathname} className={styles.content}>
-          <Outlet />
+          <Suspense fallback={<LoadingState label="Cargando…" />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
 
