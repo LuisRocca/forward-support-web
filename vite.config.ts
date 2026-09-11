@@ -17,7 +17,7 @@ export default defineConfig({
       // lcov lo consume SonarQube (sonar.javascript.lcov.reportPaths).
       reporter: ['text-summary', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/shared/api/testing.ts', 'src/env.d.ts'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/shared/api/testing.ts', 'src/testing/**', 'src/env.d.ts'],
     },
   },
 })

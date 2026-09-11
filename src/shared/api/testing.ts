@@ -75,3 +75,53 @@ export const ticketDetailFixture: TicketDetail = {
   reassignmentCount: 0,
   updatedAt: '2026-01-01T00:00:00Z',
 }
+
+export interface ApiCall {
+  method: string
+  path: string
+  search: URLSearchParams
+  body: unknown
+}
+
+export interface ApiRoute {
+  method?: string
+  path: RegExp
+  reply: (call: ApiCall) => Response | Promise<Response>
+}
+
+/**
+ * API simulada por método y ruta. Devuelve el registro de llamadas para
+ * comprobar qué pidió la interfaz. Lo no declarado responde 404.
+ */
+export function mockApi(routes: ApiRoute[]): ApiCall[] {
+  const calls: ApiCall[] = []
+  mockFetch(async (url, init) => {
+    const parsed = new URL(url)
+    const call: ApiCall = {
+      method: init?.method ?? 'GET',
+      path: parsed.pathname,
+      search: parsed.searchParams,
+      body: typeof init?.body === 'string' ? JSON.parse(init.body) : undefined,
+    }
+    calls.push(call)
+    const route = routes.find(
+      (candidate) => (candidate.method ?? 'GET') === call.method && candidate.path.test(call.path),
+    )
+    return route ? await route.reply(call) : json(404, problem(404, 'NOT_FOUND'))
+  })
+  return calls
+}
+
+/** Página de un listado keyset, con la forma del contrato. */
+export function page<T>(data: T[], nextCursor: string | null = null) {
+  return { data, pageInfo: { nextCursor, hasMore: nextCursor !== null } }
+}
+
+/** Promesa que el test resuelve cuando quiere: sirve para ver estados intermedios. */
+export function deferred<T>() {
+  let resolve: (value: T) => void = () => {}
+  const promise = new Promise<T>((done) => {
+    resolve = done
+  })
+  return { promise, resolve }
+}
