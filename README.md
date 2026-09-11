@@ -3,7 +3,7 @@
 Interfaz de operación para la gestión de tickets de soporte.
 
 Prueba técnica — Tech Lead Full Stack JavaScript.
-API en un repositorio aparte (`api_forward`), donde vive también la
+API en un repositorio aparte ([forward-support-api](https://github.com/LuisRocca/forward-support-api)), donde vive también la
 documentación de arquitectura y el modelo de datos.
 
 ## Stack
@@ -18,7 +18,7 @@ documentación de arquitectura y el modelo de datos.
 
 ## Puesta en marcha
 
-Requiere la API corriendo en `http://localhost:3000` (ver el README de `api_forward`).
+Requiere la API corriendo en `http://localhost:3000` (ver el [README de la API](https://github.com/LuisRocca/forward-support-api#readme)).
 
 ```bash
 pnpm install
@@ -36,7 +36,7 @@ contra la API, no se compila en el cliente.
 
 | Variable | Descripción |
 |---|---|
-| `VITE_API_URL` | URL base de la API. Absoluta en local (`http://localhost:3000`); relativa (`/api`) cuando front y API comparten dominio, como en el despliegue de `api_forward/infra` |
+| `VITE_API_URL` | URL base de la API. Absoluta en local (`http://localhost:3000`); relativa (`/api`) cuando front y API comparten dominio, como en el [despliegue de `infra/`](https://github.com/LuisRocca/forward-support-api/tree/main/infra) |
 
 ## Vistas
 
@@ -59,7 +59,7 @@ no triviales encontrados por el camino están en [`KNOWN_ISSUES.md`](KNOWN_ISSUE
 - **Dónde se usó:** implementación de las vistas y de los tests bajo dirección
   y revisión del autor, y documentación.
 - **Criterio propio:** el contrato OpenAPI compartido con la API
-  (`api_forward/docs/api-contract.yaml`) fija qué hace el cliente; las
+  ([`docs/api-contract.yaml`](https://github.com/LuisRocca/forward-support-api/blob/main/docs/api-contract.yaml)) fija qué hace el cliente; las
   decisiones de arquitectura están en la documentación de la API.
 - **Verificación:** cada vista se probó contra la API corriendo en el
   navegador, y un test se dio por bueno solo si fallaba al romper a propósito
