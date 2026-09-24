@@ -64,3 +64,7 @@ no triviales encontrados por el camino están en [`KNOWN_ISSUES.md`](KNOWN_ISSUE
 - **Verificación:** cada vista se probó contra la API corriendo en el
   navegador, y un test se dio por bueno solo si fallaba al romper a propósito
   el comportamiento que cubre.
+
+## Otros proyectos en el repositorio
+
+- [`apple-gallery/`](apple-gallery/README.md): landing de producto con estilo "midnight hardware gallery" (Vite + React + TS, independiente).

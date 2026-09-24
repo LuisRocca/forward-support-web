@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc", "promise"],
+  "plugins": [
+    "react",
+    "typescript",
+    "oxc",
+    "promise"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "error"
@@ -8,13 +13,19 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ],
     "react/react-in-jsx-scope": "off",
-
     "typescript/no-explicit-any": "error",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
-
     "promise/prefer-await-to-then": "error"
-  }
+  },
+  "ignorePatterns": [
+    "apple-gallery/**"
+  ]
 }
